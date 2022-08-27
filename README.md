@@ -13,6 +13,16 @@ This means it is impossible to use legacy Go version to compile binaries for leg
 ## New options
 
 ```
+--rewrite <separator><match><separator><replace>
+    Transform a request URL (in the form of "/request/path?param=value")
+    into another one if it is matched by regular expression `match`.
+
+    The rewrite target is specified by `replace`.
+    Use `$0` to represent the whole match in `match`.
+    use `$1` - `$9` to represent sub matches in `match`.
+
+    Rewrite will not evaluate recursively.
+
 --redirect <separator><match><separator><replace>[<separator><status_code>]
     Perform an HTTP redirect when request URL (in the form of "/request/path?param=value")
     is matched by regular expression `match`.

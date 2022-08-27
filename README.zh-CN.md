@@ -13,7 +13,17 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 ## 新增选项
 
 ```
---redirect <分隔符><match><separator><分隔符>[<separator><status_code>]
+--rewrite <分隔符><match><分隔符><replace>
+    如果请求的URL（“/request/path?param=value”的形式）匹配正则表达式`match`，
+    将其重写为另一种形式。
+
+    重写的目标由`replace`指定。
+    使用`$0`表示`match`的完整匹配。
+    使用`$1`-`$9`来表示`match`中的子匹配。
+
+    重写不会递归计算。
+
+--redirect <分隔符><match><分隔符><replace>[<separator><status_code>]
     当请求的URL（“/request/path?param=value”的形式）匹配正则表达式`match`时，
     执行HTTP重定向。
 

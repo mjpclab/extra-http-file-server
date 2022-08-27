@@ -6,6 +6,8 @@ import (
 )
 
 type Param struct {
+	// value: [match, replace]
+	Rewrites [][2]string
 	// value: [match, replace, code?]
 	Redirects [][3]string
 }
