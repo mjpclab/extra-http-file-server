@@ -42,6 +42,12 @@ This means it is impossible to use legacy Go version to compile binaries for leg
     use `$1` - `$9` to represent sub matches in `match`.
 ```
 
+## Option processing order
+
+- `--rewrite` executed to transform the URL.
+- `--redirect` executed if URL matched, and stop processing.
+- `--proxy` executed if URL matched, and stop processing.
+
 ## Examples
 
 Perform redirect according to `redirect` param:

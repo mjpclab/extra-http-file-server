@@ -42,6 +42,12 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
     使用`$1`-`$9`来表示`match`中的子匹配。
 ```
 
+## 选项处理顺序
+
+- 执行`--rewrite`以转换URL。
+- 如果URL匹配，执行`--redirect`并停止处理。
+- 如果URL匹配，执行`--proxy`并停止处理。
+
 ## 举例
 
 根据`redirect`参数执行重定向：
