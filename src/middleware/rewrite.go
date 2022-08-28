@@ -20,10 +20,10 @@ func getRewriteMiddleware(arg [2]string) (middleware.Middleware, error) {
 	}
 	replace = arg[1]
 
-	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (processed bool) {
+	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
 		requestURI := r.URL.RequestURI() // request uri without prefix path
 		if !reMatch.MatchString(requestURI) {
-			return false
+			return middleware.GoNext
 		}
 		matches := reMatch.FindStringSubmatch(requestURI)
 		if len(matches) > 10 {
@@ -41,7 +41,7 @@ func getRewriteMiddleware(arg [2]string) (middleware.Middleware, error) {
 		u, err := url.Parse(target)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			return true
+			return middleware.Processed
 		} else {
 			originalUrl := r.URL
 			prefixLen := len(originalUrl.RawPath) - len(originalUrl.Path)
@@ -55,9 +55,11 @@ func getRewriteMiddleware(arg [2]string) (middleware.Middleware, error) {
 			r.URL = originalUrl.ResolveReference(u)
 			if len(prefix) > 1 { // if prefix=="/", skip
 				r.URL.RawPath = prefix + r.URL.Path
+			} else {
+				r.URL.RawPath = r.URL.Path
 			}
 
-			return false
+			return middleware.SkipRests
 		}
 	}, nil
 }

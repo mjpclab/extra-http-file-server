@@ -25,10 +25,10 @@ func getProxyMiddleware(arg [2]string) (middleware.Middleware, error) {
 		Director: func(request *http.Request) {},
 	}
 
-	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (processed bool) {
+	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
 		requestURI := r.URL.RequestURI() // request uri without prefix path
 		if !reMatch.MatchString(requestURI) {
-			return false
+			return middleware.GoNext
 		}
 		matches := reMatch.FindStringSubmatch(requestURI)
 		if len(matches) > 10 {
@@ -47,18 +47,18 @@ func getProxyMiddleware(arg [2]string) (middleware.Middleware, error) {
 		if err != nil ||
 			((len(u.Host) == 0 || u.Host == r.Host) && u.RequestURI() == r.RequestURI) {
 			w.WriteHeader(http.StatusBadRequest)
-			return true
+			return middleware.Processed
 		}
 
 		u = r.URL.ResolveReference(u)
 		rProxy, err := http.NewRequest(r.Method, u.String(), r.Body)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			return true
+			return middleware.Processed
 		}
 
 		rProxy.Header = r.Header
 		proxy.ServeHTTP(w, rProxy)
-		return true
+		return middleware.Processed
 	}, nil
 }
