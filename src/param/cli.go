@@ -22,6 +22,9 @@ func NewCliCmd() *goNixArgParser.Command {
 	err = options.AddFlagValues("redirects", "--redirect", "", nil, "add rule for http redirect, format <sep><match><sep><replace>[<sep><code>]")
 	serverError.CheckFatal(err)
 
+	err = options.AddFlagValues("proxies", "--proxy", "", nil, "add rule to proxy request URL, format <sep><match><sep><target>")
+	serverError.CheckFatal(err)
+
 	return cmd
 }
 
@@ -42,6 +45,10 @@ func CmdResultsToParams(results []*goNixArgParser.ParseResult) (params []*Param,
 		for i := range redirects {
 			copy(param.Redirects[i][:], redirects[i])
 		}
+
+		// proxies
+		proxies, _ := result.GetStrings("proxies")
+		param.Proxies = baseParam.SplitAllKeyValue(proxies)
 
 		param.normalize()
 		params = append(params, param)

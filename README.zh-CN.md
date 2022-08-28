@@ -32,6 +32,14 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
     使用`$1`-`$9`来表示`match`中的子匹配。
 
     可选的`status_code`指定HTTP重定向代码。 默认为301。
+
+--proxy <分隔符><match><分隔符><replace>
+    如果请求的URL（“/request/path?param=value”的形式）匹配正则表达式`match`，
+    将代理请求另一个目标。
+
+    代理的目标由`replace`指定。
+    使用`$0`表示`match`的完整匹配。
+    使用`$1`-`$9`来表示`match`中的子匹配。
 ```
 
 ## 举例

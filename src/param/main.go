@@ -10,6 +10,8 @@ type Param struct {
 	Rewrites [][2]string
 	// value: [match, replace, code?]
 	Redirects [][3]string
+	// value: [match, replace]
+	Proxies [][2]string
 }
 
 func (param *Param) normalize() {

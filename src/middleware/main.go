@@ -30,6 +30,15 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 		}
 	}
 
+	// proxies
+	for i := range param.Proxies {
+		mid, err := getProxyMiddleware(param.Proxies[i])
+		errs = serverError.AppendError(errs, err)
+		if mid != nil {
+			preMids = append(preMids, mid)
+		}
+	}
+
 	return
 }
 

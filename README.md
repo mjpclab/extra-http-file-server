@@ -32,6 +32,14 @@ This means it is impossible to use legacy Go version to compile binaries for leg
     use `$1` - `$9` to represent sub matches in `match`.
 
     Optional `status_code` specifies HTTP redirect code. defaults to 301.
+
+--proxy <separator><match><separator><replace>
+    Proxy a request URL (in the form of "/request/path?param=value")
+    to target if it is matched by regular expression `match`.
+
+    The proxy target is specified by `replace`.
+    Use `$0` to represent the whole match in `match`.
+    use `$1` - `$9` to represent sub matches in `match`.
 ```
 
 ## Examples
