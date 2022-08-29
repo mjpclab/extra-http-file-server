@@ -12,6 +12,9 @@ type Param struct {
 	Redirects [][3]string
 	// value: [match, replace]
 	Proxies [][2]string
+
+	// value: [code, file]
+	StatusPages [][2]string
 }
 
 func (param *Param) normalize() {

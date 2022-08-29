@@ -23,7 +23,7 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 
     重写不会递归计算。
 
---redirect <分隔符><match><分隔符><replace>[<separator><status_code>]
+--redirect <分隔符><match><分隔符><replace>[<separator><status-code>]
     当请求的URL（“/request/path?param=value”的形式）匹配正则表达式`match`时，
     执行HTTP重定向。
 
@@ -40,6 +40,9 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
     代理的目标由`replace`指定。
     使用`$0`表示`match`的完整匹配。
     使用`$1`-`$9`来表示`match`中的子匹配。
+
+--status-page <分隔符><status-code><分隔符><fs-path>
+    当响应状态码为`status-code`时，用文件`fs-path`的内容来响应。
 ```
 
 ## 选项处理顺序

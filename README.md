@@ -23,7 +23,7 @@ This means it is impossible to use legacy Go version to compile binaries for leg
 
     Rewrite will not evaluate recursively.
 
---redirect <separator><match><separator><replace>[<separator><status_code>]
+--redirect <separator><match><separator><replace>[<separator><status-code>]
     Perform an HTTP redirect when request URL (in the form of "/request/path?param=value")
     is matched by regular expression `match`.
 
@@ -40,6 +40,9 @@ This means it is impossible to use legacy Go version to compile binaries for leg
     The proxy target is specified by `replace`.
     Use `$0` to represent the whole match in `match`.
     use `$1` - `$9` to represent sub matches in `match`.
+
+--status-page <separator><status-code><separator><fs-path>
+    When response status is `status-code`, respond with the file content from `fs-path`.
 ```
 
 ## Option processing order
