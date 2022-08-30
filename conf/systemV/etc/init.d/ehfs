@@ -1,0 +1,90 @@
+#!/bin/sh
+#
+# ehfs - Go HTTP File Server
+#
+# chkconfig:   35 85 15
+# description: Go HTTP File Server
+# processname: ehfs
+# config:      /etc/ehfs.conf
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ "$NETWORKING" = "no" ] && exit 0
+
+ehfs="/usr/local/bin/ehfs"
+prog=$(basename $ehfs)
+
+sysconfig="/etc/sysconfig/$prog"
+[ -f "$sysconfig" ] && . "$sysconfig"
+
+pidfile="/var/run/${prog}.pid"
+
+start() {
+	echo -n $"Starting $prog: "
+	setcap CAP_NET_BIND_SERVICE=+ep "$ehfs"
+	mkdir -p /var/log/ehfs/
+	runuser nobody -- "$ehfs" --config=/etc/ehfs.conf &
+	retval=$?
+	echo
+	if [ $retval -eq 0 ]; then
+		echo -n "$!" >"$pidfile"
+		success
+	else
+		failure
+	fi
+	return $retval
+}
+
+stop() {
+	echo -n $"Stopping $prog: "
+	killproc -p "$pidfile" "$prog"
+	retval=$?
+	echo
+	return $retval
+}
+
+restart() {
+	stop
+	start
+}
+
+_status() {
+	status $prog
+}
+
+_status_q() {
+	_status >/dev/null 2>&1
+}
+
+case "$1" in
+start)
+	_status_q && exit 0
+	$1
+	;;
+stop)
+	_status_q || exit 0
+	$1
+	;;
+restart | reload)
+	restart
+	;;
+status)
+	_status
+	;;
+status_q)
+	_status_q
+	;;
+condrestart | try-restart)
+	_status_q || exit 7
+	restart
+	;;
+*)
+	echo $"Usage: $0 {start|stop|reload|status|restart}"
+	exit 2
+	;;
+esac
