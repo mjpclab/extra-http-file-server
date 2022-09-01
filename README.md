@@ -41,6 +41,12 @@ This means it is impossible to use legacy Go version to compile binaries for leg
     Use `$0` to represent the whole match in `match`.
     use `$1` - `$9` to represent sub matches in `match`.
 
+--return <separator><match><separator><status-code>[<separator><fs-path>]
+    When request URL (in the form of "/request/path?param=value")
+    is matched by `match`, return the status code `status-code`
+    immediately and stop processing.
+    Optional response page content is specified by `fs-path`.
+
 --status-page <separator><status-code><separator><fs-path>
     When response status is `status-code`, respond with the file content from `fs-path`.
 ```
@@ -50,6 +56,7 @@ This means it is impossible to use legacy Go version to compile binaries for leg
 - `--rewrite` executed to transform the URL.
 - `--redirect` executed if URL matched, and stop processing.
 - `--proxy` executed if URL matched, and stop processing.
+- `--return` executed if URL matched, and stop processing.
 
 ## Examples
 

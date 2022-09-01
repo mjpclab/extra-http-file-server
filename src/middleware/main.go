@@ -39,6 +39,15 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 		}
 	}
 
+	// returns
+	for i := range param.Returns {
+		mid, err := getReturnStatusMiddleware(param.Returns[i])
+		errs = serverError.AppendError(errs, err)
+		if mid != nil {
+			preMids = append(preMids, mid)
+		}
+	}
+
 	// status pages
 	for i := range param.StatusPages {
 		mid, err := getStatusPageMiddleware(param.StatusPages[i])
