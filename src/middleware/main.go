@@ -12,7 +12,13 @@ var errInvalidParamValue = errors.New("invalid param value")
 var errParamCountNotMatch = errors.New("base-param count is not equal to param count")
 
 func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids, postMids []middleware.Middleware, errs []error) {
-	var statusPageMids []middleware.Middleware
+	preMids = make([]middleware.Middleware, 0, len(param.Rewrites)+
+		len(param.Redirects)+
+		len(param.Proxies)+
+		len(param.Returns),
+	)
+	postMids = make([]middleware.Middleware, 0, len(param.StatusPages))
+	statusPageMids := make([]middleware.Middleware, 0, len(param.StatusPages))
 
 	// status pages
 	for i := range param.StatusPages {
