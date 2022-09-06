@@ -12,6 +12,18 @@ var errInvalidParamValue = errors.New("invalid param value")
 var errParamCountNotMatch = errors.New("base-param count is not equal to param count")
 
 func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids, postMids []middleware.Middleware, errs []error) {
+	var statusPageMids []middleware.Middleware
+
+	// status pages
+	for i := range param.StatusPages {
+		mid, err := getStatusPageMiddleware(param.StatusPages[i])
+		errs = serverError.AppendError(errs, err)
+		if mid != nil {
+			statusPageMids = append(statusPageMids, mid)
+			postMids = append(postMids, mid)
+		}
+	}
+
 	// rewrites
 	for i := range param.Rewrites {
 		mid, err := getRewriteMiddleware(param.Rewrites[i])
@@ -41,19 +53,10 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 
 	// returns
 	for i := range param.Returns {
-		mid, err := getReturnStatusMiddleware(param.Returns[i])
+		mid, err := getReturnStatusMiddleware(param.Returns[i], statusPageMids)
 		errs = serverError.AppendError(errs, err)
 		if mid != nil {
 			preMids = append(preMids, mid)
-		}
-	}
-
-	// status pages
-	for i := range param.StatusPages {
-		mid, err := getStatusPageMiddleware(param.StatusPages[i])
-		errs = serverError.AppendError(errs, err)
-		if mid != nil {
-			postMids = append(postMids, mid)
 		}
 	}
 

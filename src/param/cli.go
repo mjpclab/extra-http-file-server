@@ -25,7 +25,7 @@ func NewCliCmd() *goNixArgParser.Command {
 	err = options.AddFlagValues("proxies", "--proxy", "", nil, "add rule to proxy request URL, format <sep><match><sep><target>")
 	serverError.CheckFatal(err)
 
-	err = options.AddFlagValues("returns", "--return", "", nil, "add rule to return status code with optional page file, format <sep><match><sep><code>[<sep><fs-path>]")
+	err = options.AddFlagValues("returns", "--return", "", nil, "add rule to return status code, format <sep><match><sep><code>")
 	serverError.CheckFatal(err)
 
 	err = options.AddFlagValues("statuspages", "--status-page", "", nil, "set page file for specific http status code, format <sep><status><sep><fs-path>")
@@ -57,12 +57,8 @@ func CmdResultsToParams(results []*goNixArgParser.ParseResult) (params []*Param,
 		param.Proxies = baseParam.SplitAllKeyValue(proxies)
 
 		// returns
-		strReturns, _ := result.GetStrings("returns")
-		returns := baseParam.SplitAllKeyValues(strReturns)
-		param.Returns = make([][3]string, len(returns))
-		for i := range returns {
-			copy(param.Returns[i][:], returns[i])
-		}
+		returns, _ := result.GetStrings("returns")
+		param.Returns = baseParam.SplitAllKeyValue(returns)
 
 		// status pages
 		statusPages, _ := result.GetStrings("statuspages")

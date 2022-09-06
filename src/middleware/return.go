@@ -1,20 +1,16 @@
 package middleware
 
 import (
-	"io"
-	"mjpclab.dev/ehfs/src/util"
 	"mjpclab.dev/ghfs/src/middleware"
 	"net/http"
-	"os"
 	"regexp"
 	"strconv"
 )
 
-func getReturnStatusMiddleware(arg [3]string) (middleware.Middleware, error) {
+func getReturnStatusMiddleware(arg [2]string, statusPageMids []middleware.Middleware) (middleware.Middleware, error) {
 	var err error
 	var reMatch *regexp.Regexp
 	var code int
-	var filename string
 
 	reMatch, err = regexp.Compile(arg[0])
 	if err != nil {
@@ -24,7 +20,6 @@ func getReturnStatusMiddleware(arg [3]string) (middleware.Middleware, error) {
 	if err != nil {
 		return nil, err
 	}
-	filename = arg[2]
 
 	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
 		requestURI := r.URL.RequestURI() // request uri without prefix path
@@ -33,23 +28,11 @@ func getReturnStatusMiddleware(arg [3]string) (middleware.Middleware, error) {
 		}
 
 		result = middleware.Processed
-
 		w.WriteHeader(code)
-
-		if len(filename) > 0 {
-			file, err := os.Open(filename)
-			if err != nil {
-				util.LogError(context.Logger, err)
-				return
-			}
-
-			_, err = io.Copy(w, file)
-			if err != nil {
-				util.LogError(context.Logger, err)
-			}
-			err = file.Close()
-			if err != nil {
-				util.LogError(context.Logger, err)
+		context.Status = code
+		for i := range statusPageMids {
+			if statusPageMids[i](w, r, context) != middleware.GoNext {
+				break
 			}
 		}
 		return
