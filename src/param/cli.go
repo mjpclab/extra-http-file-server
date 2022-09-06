@@ -57,12 +57,8 @@ func CmdResultsToParams(results []*goNixArgParser.ParseResult) (params []*Param,
 		param.Proxies = baseParam.SplitAllKeyValue(proxies)
 
 		// returns
-		strReturns, _ := result.GetStrings("returns")
-		returns := baseParam.SplitAllKeyValues(strReturns)
-		param.Returns = make([][3]string, len(returns))
-		for i := range returns {
-			copy(param.Returns[i][:], returns[i])
-		}
+		returns, _ := result.GetStrings("returns")
+		param.Returns = baseParam.SplitAllKeyValue(returns)
 
 		// status pages
 		statusPages, _ := result.GetStrings("statuspages")

@@ -8,7 +8,7 @@ import (
 )
 
 func TestReturnStatus(t *testing.T) {
-	mid, err := getReturnStatusMiddleware([3]string{`/doc`, "404", "/tmp/asdf"})
+	mid, err := getReturnStatusMiddleware([2]string{`/doc`, "404"}, nil)
 	if err != nil {
 		t.FailNow()
 	}
