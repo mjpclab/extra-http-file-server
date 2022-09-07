@@ -1,3 +1,4 @@
+export GOPROXY=https://goproxy.cn,direct
 TMP='/tmp'
 OUTDIR='../output'
 MAINNAME='ehfs'

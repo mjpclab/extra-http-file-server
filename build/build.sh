@@ -3,7 +3,6 @@
 cd $(dirname "$0")
 
 source ./build.inc.sh
-export GOPROXY=https://goproxy.cn,direct
 mkdir -p "$OUTDIR"
 
 for build in "$@"; do
