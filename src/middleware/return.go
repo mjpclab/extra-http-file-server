@@ -28,13 +28,14 @@ func getReturnStatusMiddleware(arg [2]string, statusPageMids []middleware.Middle
 		}
 
 		result = middleware.Processed
-		w.WriteHeader(code)
 		context.Status = code
 		for i := range statusPageMids {
 			if statusPageMids[i](w, r, context) != middleware.GoNext {
-				break
+				return
 			}
 		}
+
+		w.WriteHeader(code)
 		return
 	}, nil
 }
