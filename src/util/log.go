@@ -14,3 +14,15 @@ func LogError(logger *serverLog.Logger, err error) {
 		logger.LogError(buf)
 	}
 }
+
+func LogErrorString(logger *serverLog.Logger, err string) {
+	if logger == nil {
+		return
+	}
+
+	if logger.CanLogError() {
+		buf := serverLog.NewBuffer(len(err))
+		buf = append(buf, []byte(err)...)
+		logger.LogError(buf)
+	}
+}

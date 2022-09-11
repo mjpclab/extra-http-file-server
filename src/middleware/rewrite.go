@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"mjpclab.dev/ehfs/src/util"
 	"mjpclab.dev/ghfs/src/middleware"
 	"net/http"
 	"net/url"
@@ -40,6 +41,7 @@ func getRewriteMiddleware(arg [2]string) (middleware.Middleware, error) {
 
 		u, err := url.Parse(target)
 		if err != nil {
+			util.LogError(context.Logger, err)
 			w.WriteHeader(http.StatusBadRequest)
 			return middleware.Processed
 		} else {
