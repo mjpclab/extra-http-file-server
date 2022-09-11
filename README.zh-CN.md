@@ -51,7 +51,7 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 
 ## 选项处理顺序
 
-- 执行`--rewrite`以转换URL。
+- 执行`--rewrite`以转换URL，匹配后跳过`--redirect`，`--proxy`和`--return`。
 - 如果URL匹配，执行`--redirect`并停止处理。
 - 如果URL匹配，执行`--proxy`并停止处理。
 - 如果URL匹配，执行`--return`并停止处理。

@@ -52,7 +52,7 @@ This means it is impossible to use legacy Go version to compile binaries for leg
 
 ## Option processing order
 
-- `--rewrite` executed to transform the URL.
+- `--rewrite` executed to transform the URL, and skip `--redirect`, `--proxy` and `--return` if matched.
 - `--redirect` executed if URL matched, and stop processing.
 - `--proxy` executed if URL matched, and stop processing.
 - `--return` executed if URL matched, and stop processing.
