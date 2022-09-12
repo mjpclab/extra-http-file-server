@@ -20,7 +20,7 @@ func TestRewrite(t *testing.T) {
 	w = httptest.NewRecorder()
 	r = httptest.NewRequest(http.MethodGet, "/abc", nil)
 	result = mid(w, r, &middleware.Context{})
-	if result != middleware.GoNext {
+	if result != middleware.SkippedGoNext {
 		t.Error(result)
 	}
 	if w.Code != 200 {
@@ -33,7 +33,7 @@ func TestRewrite(t *testing.T) {
 	w = httptest.NewRecorder()
 	r = httptest.NewRequest(http.MethodGet, "/doc", nil)
 	result = mid(w, r, &middleware.Context{})
-	if result != middleware.SkipRests {
+	if result != middleware.ProcessedGoNext {
 		t.Error(result)
 	}
 	if w.Code != 200 {
@@ -47,7 +47,7 @@ func TestRewrite(t *testing.T) {
 	r = httptest.NewRequest(http.MethodGet, "/doc/net/http", nil)
 	r.URL.RawPath = "/foo/bar/doc/net/http"
 	result = mid(w, r, &middleware.Context{})
-	if result != middleware.SkipRests {
+	if result != middleware.ProcessedGoNext {
 		t.Error(result)
 	}
 	if w.Code != 200 {

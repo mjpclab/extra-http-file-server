@@ -29,7 +29,7 @@ func getProxyMiddleware(arg [2]string) (middleware.Middleware, error) {
 	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
 		requestURI := r.URL.RequestURI() // request uri without prefix path
 		if !reMatch.MatchString(requestURI) {
-			return middleware.GoNext
+			return middleware.SkippedGoNext
 		}
 		matches := reMatch.FindStringSubmatch(requestURI)
 		if len(matches) > 10 {
@@ -49,7 +49,7 @@ func getProxyMiddleware(arg [2]string) (middleware.Middleware, error) {
 			((len(u.Host) == 0 || u.Host == r.Host) && u.RequestURI() == r.RequestURI) {
 			util.LogErrorString(context.Logger, "proxy to self URL")
 			w.WriteHeader(http.StatusBadRequest)
-			return middleware.Processed
+			return middleware.Outputted
 		}
 
 		u = r.URL.ResolveReference(u)
@@ -57,11 +57,11 @@ func getProxyMiddleware(arg [2]string) (middleware.Middleware, error) {
 		if err != nil {
 			util.LogError(context.Logger, err)
 			w.WriteHeader(http.StatusBadRequest)
-			return middleware.Processed
+			return middleware.Outputted
 		}
 
 		rProxy.Header = r.Header
 		proxy.ServeHTTP(w, rProxy)
-		return middleware.Processed
+		return middleware.Outputted
 	}, nil
 }

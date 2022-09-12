@@ -29,7 +29,7 @@ func getRedirectMiddleware(arg [3]string) (middleware.Middleware, error) {
 	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
 		requestURI := r.URL.RequestURI() // request uri without prefix path
 		if !reMatch.MatchString(requestURI) {
-			return middleware.GoNext
+			return middleware.SkippedGoNext
 		}
 		matches := reMatch.FindStringSubmatch(requestURI)
 		if len(matches) > 10 {
@@ -52,6 +52,6 @@ func getRedirectMiddleware(arg [3]string) (middleware.Middleware, error) {
 		} else {
 			http.Redirect(w, r, u.String(), code)
 		}
-		return middleware.Processed
+		return middleware.Outputted
 	}, nil
 }

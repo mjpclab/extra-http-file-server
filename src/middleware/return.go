@@ -24,13 +24,13 @@ func getReturnStatusMiddleware(arg [2]string, statusPageMids []middleware.Middle
 	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
 		requestURI := r.URL.RequestURI() // request uri without prefix path
 		if !reMatch.MatchString(requestURI) {
-			return middleware.GoNext
+			return middleware.SkippedGoNext
 		}
 
-		result = middleware.Processed
+		result = middleware.Outputted
 		context.Status = code
 		for i := range statusPageMids {
-			if statusPageMids[i](w, r, context) != middleware.GoNext {
+			if statusPageMids[i](w, r, context) == middleware.Outputted {
 				return
 			}
 		}

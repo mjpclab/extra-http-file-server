@@ -21,7 +21,7 @@ func TestRedirect(t *testing.T) {
 	w = httptest.NewRecorder()
 	r = httptest.NewRequest(http.MethodGet, "/abc", nil)
 	result = mid(w, r, &middleware.Context{})
-	if result != middleware.GoNext {
+	if result != middleware.SkippedGoNext {
 		t.Error(result)
 	}
 	if w.Code != 200 {
@@ -35,7 +35,7 @@ func TestRedirect(t *testing.T) {
 	w = httptest.NewRecorder()
 	r = httptest.NewRequest(http.MethodGet, "/abc?goto=/", nil)
 	result = mid(w, r, &middleware.Context{})
-	if result != middleware.Processed {
+	if result != middleware.Outputted {
 		t.Error(result)
 	}
 	if w.Code != 307 {
@@ -49,7 +49,7 @@ func TestRedirect(t *testing.T) {
 	w = httptest.NewRecorder()
 	r = httptest.NewRequest(http.MethodGet, "/abc?goto=http://www.example.com/", nil)
 	result = mid(w, r, &middleware.Context{})
-	if result != middleware.Processed {
+	if result != middleware.Outputted {
 		t.Error(result)
 	}
 	if w.Code != 307 {
