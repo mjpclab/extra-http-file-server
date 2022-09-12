@@ -44,24 +44,30 @@ func getProxyMiddleware(arg [2]string) (middleware.Middleware, error) {
 			target = "/"
 		}
 
-		u, err := url.Parse(target)
-		if err != nil ||
-			((len(u.Host) == 0 || u.Host == r.Host) && u.RequestURI() == r.RequestURI) {
-			util.LogErrorString(context.Logger, "proxy to self URL")
-			w.WriteHeader(http.StatusBadRequest)
-			return middleware.Outputted
-		}
-
-		u = r.URL.ResolveReference(u)
-		rProxy, err := http.NewRequest(r.Method, u.String(), r.Body)
+		result = middleware.Outputted
+		targetUrl, err := url.Parse(target)
 		if err != nil {
 			util.LogError(context.Logger, err)
 			w.WriteHeader(http.StatusBadRequest)
-			return middleware.Outputted
+			return
+		}
+
+		targetUrl = r.URL.ResolveReference(targetUrl)
+		if (len(targetUrl.Host) == 0 || targetUrl.Host == r.Host) && targetUrl.RequestURI() == r.RequestURI {
+			util.LogErrorString(context.Logger, "proxy to self URL")
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		rProxy, err := http.NewRequest(r.Method, targetUrl.String(), r.Body)
+		if err != nil {
+			util.LogError(context.Logger, err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
 		}
 
 		rProxy.Header = r.Header
 		proxy.ServeHTTP(w, rProxy)
-		return middleware.Outputted
+		return
 	}, nil
 }

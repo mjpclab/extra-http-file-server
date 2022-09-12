@@ -44,14 +44,21 @@ func getRedirectMiddleware(arg [3]string) (middleware.Middleware, error) {
 			target = "/"
 		}
 
-		u, err := url.Parse(target)
-		if err != nil ||
-			((len(u.Host) == 0 || u.Host == r.Host) && u.RequestURI() == r.RequestURI) {
+		result = middleware.Outputted
+		targetUrl, err := url.Parse(target)
+		if err != nil {
+			util.LogError(context.Logger, err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		targetUrl = r.URL.ResolveReference(targetUrl)
+		if (len(targetUrl.Host) == 0 || targetUrl.Host == r.Host) && targetUrl.RequestURI() == r.RequestURI {
 			util.LogErrorString(context.Logger, "redirect to self URL")
 			w.WriteHeader(http.StatusBadRequest)
 		} else {
-			http.Redirect(w, r, u.String(), code)
+			http.Redirect(w, r, targetUrl.String(), code)
 		}
-		return middleware.Outputted
+		return
 	}, nil
 }
