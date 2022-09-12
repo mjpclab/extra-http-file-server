@@ -40,21 +40,27 @@ func getStatusPageMiddleware(arg [2]string) (middleware.Middleware, error) {
 			util.LogError(context.Logger, err)
 			return middleware.GoNext
 		}
+		defer file.Close()
+
+		info, err := file.Stat()
+		if err != nil {
+			util.LogError(context.Logger, err)
+			return middleware.GoNext
+		}
 
 		contentType, err := ghfsUtil.GetContentType(statusFile, file)
 		if err != nil {
 			util.LogError(context.Logger, err)
 			return middleware.GoNext
 		}
-		w.Header().Set("Content-Type", contentType)
+
+		header := w.Header()
+		header.Set("Last-Modified", info.ModTime().UTC().Format(http.TimeFormat))
+		header.Set("Content-Type", contentType)
 
 		w.WriteHeader(context.Status)
 		if serverHandler.NeedResponseBody(r.Method) {
 			_, err = io.Copy(w, file)
-			if err != nil {
-				util.LogError(context.Logger, err)
-			}
-			err = file.Close()
 			if err != nil {
 				util.LogError(context.Logger, err)
 			}
