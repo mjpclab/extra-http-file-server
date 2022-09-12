@@ -39,7 +39,7 @@ func getRewriteMiddleware(arg [2]string) (middleware.Middleware, error) {
 			target = "/"
 		}
 
-		u, err := url.Parse(target)
+		targetUrl, err := url.Parse(target)
 		if err != nil {
 			util.LogError(context.Logger, err)
 			w.WriteHeader(http.StatusBadRequest)
@@ -54,13 +54,14 @@ func getRewriteMiddleware(arg [2]string) (middleware.Middleware, error) {
 			}
 			prefix := originalUrl.RawPath[:prefixLen]
 
-			r.URL = originalUrl.ResolveReference(u)
-			if len(prefix) > 1 { // if prefix=="/", skip
-				r.URL.RawPath = prefix + r.URL.Path
+			targetUrl = originalUrl.ResolveReference(targetUrl)
+			if len(prefix) > 1 {
+				targetUrl.RawPath = prefix + targetUrl.Path
 			} else {
-				r.URL.RawPath = r.URL.Path
+				targetUrl.RawPath = targetUrl.Path
 			}
 
+			r.URL = targetUrl
 			return middleware.ProcessedGoNext
 		}
 	}, nil

@@ -12,59 +12,69 @@ var errInvalidParamValue = errors.New("invalid param value")
 var errParamCountNotMatch = errors.New("base-param count is not equal to param count")
 
 func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids, postMids []middleware.Middleware, errs []error) {
-	preMids = make([]middleware.Middleware, 0, len(param.Rewrites)+
-		len(param.Redirects)+
-		len(param.Proxies)+
-		len(param.Returns),
-	)
-	postMids = make([]middleware.Middleware, 0, len(param.StatusPages))
-	statusPageMids := make([]middleware.Middleware, 0, len(param.StatusPages))
-
 	// status pages
+	statusPageMids := make([]middleware.Middleware, 0, len(param.StatusPages))
 	for i := range param.StatusPages {
 		mid, err := getStatusPageMiddleware(param.StatusPages[i])
 		errs = serverError.AppendError(errs, err)
 		if mid != nil {
 			statusPageMids = append(statusPageMids, mid)
-			postMids = append(postMids, mid)
 		}
 	}
 
 	// rewrites
+	rewriteMids := make([]middleware.Middleware, 0, len(param.Rewrites))
 	for i := range param.Rewrites {
 		mid, err := getRewriteMiddleware(param.Rewrites[i])
 		errs = serverError.AppendError(errs, err)
 		if mid != nil {
-			preMids = append(preMids, mid)
+			rewriteMids = append(rewriteMids, mid)
 		}
 	}
 
 	// redirects
+	redirectMids := make([]middleware.Middleware, 0, len(param.Redirects))
 	for i := range param.Redirects {
 		mid, err := getRedirectMiddleware(param.Redirects[i])
 		errs = serverError.AppendError(errs, err)
 		if mid != nil {
-			preMids = append(preMids, mid)
+			redirectMids = append(redirectMids, mid)
 		}
 	}
 
 	// proxies
+	proxyMids := make([]middleware.Middleware, 0, len(param.Proxies))
 	for i := range param.Proxies {
 		mid, err := getProxyMiddleware(param.Proxies[i])
 		errs = serverError.AppendError(errs, err)
 		if mid != nil {
-			preMids = append(preMids, mid)
+			proxyMids = append(proxyMids, mid)
 		}
 	}
 
 	// returns
+	returnMids := make([]middleware.Middleware, 0, len(param.Returns))
 	for i := range param.Returns {
 		mid, err := getReturnStatusMiddleware(param.Returns[i], statusPageMids)
 		errs = serverError.AppendError(errs, err)
 		if mid != nil {
-			preMids = append(preMids, mid)
+			returnMids = append(returnMids, mid)
 		}
 	}
+
+	// combine all mids
+	preMids = make([]middleware.Middleware, 0, len(rewriteMids)+
+		len(redirectMids)+
+		len(proxyMids)+
+		len(returnMids),
+	)
+	preMids = append(preMids, rewriteMids...)
+	preMids = append(preMids, redirectMids...)
+	preMids = append(preMids, proxyMids...)
+	preMids = append(preMids, returnMids...)
+
+	postMids = make([]middleware.Middleware, 0, len(param.StatusPages))
+	postMids = append(postMids, statusPageMids...)
 
 	return
 }

@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func getReturnStatusMiddleware(arg [2]string, statusPageMids []middleware.Middleware) (middleware.Middleware, error) {
+func getReturnStatusMiddleware(arg [2]string, outputMids []middleware.Middleware) (middleware.Middleware, error) {
 	var err error
 	var reMatch *regexp.Regexp
 	var code int
@@ -29,8 +29,8 @@ func getReturnStatusMiddleware(arg [2]string, statusPageMids []middleware.Middle
 
 		result = middleware.Outputted
 		context.Status = code
-		for i := range statusPageMids {
-			if statusPageMids[i](w, r, context) == middleware.Outputted {
+		for i := range outputMids {
+			if outputMids[i](w, r, context) == middleware.Outputted {
 				return
 			}
 		}
