@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func getRewriteMiddleware(arg [2]string) (middleware.Middleware, error) {
+func getRewriteMiddleware(arg [2]string, rewrittenResult middleware.ProcessResult) (middleware.Middleware, error) {
 	var err error
 	var reMatch *regexp.Regexp
 	var replace string
@@ -24,7 +24,7 @@ func getRewriteMiddleware(arg [2]string) (middleware.Middleware, error) {
 	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
 		requestURI := r.URL.RequestURI() // request uri without prefix path
 		if !reMatch.MatchString(requestURI) {
-			return middleware.SkippedGoNext
+			return middleware.GoNext
 		}
 		matches := reMatch.FindStringSubmatch(requestURI)
 		if len(matches) > 10 {
@@ -62,7 +62,7 @@ func getRewriteMiddleware(arg [2]string) (middleware.Middleware, error) {
 			}
 
 			r.URL = targetUrl
-			return middleware.ProcessedGoNext
+			return rewrittenResult
 		}
 	}, nil
 }

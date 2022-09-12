@@ -20,7 +20,7 @@ func TestReturnStatus(t *testing.T) {
 	w = httptest.NewRecorder()
 	r = httptest.NewRequest(http.MethodGet, "/abc", nil)
 	result = mid(w, r, &middleware.Context{})
-	if result != middleware.SkippedGoNext {
+	if result != middleware.GoNext {
 		t.Error(result)
 	}
 	if w.Code != 200 {

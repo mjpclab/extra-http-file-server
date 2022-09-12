@@ -29,7 +29,7 @@ func getProxyMiddleware(arg [2]string) (middleware.Middleware, error) {
 	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
 		requestURI := r.URL.RequestURI() // request uri without prefix path
 		if !reMatch.MatchString(requestURI) {
-			return middleware.SkippedGoNext
+			return middleware.GoNext
 		}
 		matches := reMatch.FindStringSubmatch(requestURI)
 		if len(matches) > 10 {

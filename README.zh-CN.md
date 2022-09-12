@@ -21,7 +21,8 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
     使用`$0`表示`match`的完整匹配。
     使用`$1`-`$9`来表示`match`中的子匹配。
 
-    重写不会递归计算。
+--rewrite-end <分隔符><match><分隔符><replace>
+    与--rewrite相似，但匹配后停止后续处理流程。
 
 --redirect <分隔符><match><分隔符><replace>[<separator><status-code>]
     当请求的URL（“/request/path?param=value”的形式）匹配正则表达式`match`时，
@@ -51,10 +52,11 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 
 ## 选项处理顺序
 
-- 执行`--rewrite`以转换URL，匹配后跳过`--redirect`，`--proxy`和`--return`。
+- 如果URL匹配，执行`--rewrite`以转换URL。
+- 如果URL匹配，执行`--rewrite--end`以转换URL，跳过`--redirect`，`--proxy`和`--return`。
 - 如果URL匹配，执行`--redirect`并停止处理。
 - 如果URL匹配，执行`--proxy`并停止处理。
-- 如果URL匹配，执行`--return`并停止处理。
+- 如果URL匹配，执行`--return`。
 - 如果状态码匹配，执行`--status-page`并停止处理。
 
 ## 举例

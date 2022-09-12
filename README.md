@@ -21,7 +21,8 @@ This means it is impossible to use legacy Go version to compile binaries for leg
     Use `$0` to represent the whole match in `match`.
     use `$1` - `$9` to represent sub matches in `match`.
 
-    Rewrite will not evaluate recursively.
+--rewrite-end <分隔符><match><分隔符><replace>
+    Similar to --rewrite, but skip rest process if matched.
 
 --redirect <separator><match><separator><replace>[<separator><status-code>]
     Perform an HTTP redirect when request URL (in the form of "/request/path?param=value")
@@ -52,10 +53,11 @@ This means it is impossible to use legacy Go version to compile binaries for leg
 
 ## Option processing order
 
-- `--rewrite` executed to transform the URL, and skip `--redirect`, `--proxy` and `--return` if matched.
+- `--rewrite` executed to transform the URL if matched.
+- `--rewrite-end` executed to transform the URL if matched, and skip `--redirect`, `--proxy` and `--return`.
 - `--redirect` executed if URL matched, and stop processing.
 - `--proxy` executed if URL matched, and stop processing.
-- `--return` executed if URL matched, and stop processing.
+- `--return` executed if URL matched.
 - `--status-page` executed if status code matched, and stop processing.
 
 ## Examples

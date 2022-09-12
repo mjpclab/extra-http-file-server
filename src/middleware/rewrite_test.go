@@ -8,7 +8,7 @@ import (
 )
 
 func TestRewrite(t *testing.T) {
-	mid, err := getRewriteMiddleware([2]string{`^/doc(/.*)?`, "/api$1"})
+	mid, err := getRewriteMiddleware([2]string{`^/doc(/.*)?`, "/api$1"}, middleware.SkipRests)
 	if err != nil {
 		t.FailNow()
 	}
@@ -20,7 +20,7 @@ func TestRewrite(t *testing.T) {
 	w = httptest.NewRecorder()
 	r = httptest.NewRequest(http.MethodGet, "/abc", nil)
 	result = mid(w, r, &middleware.Context{})
-	if result != middleware.SkippedGoNext {
+	if result != middleware.GoNext {
 		t.Error(result)
 	}
 	if w.Code != 200 {
@@ -33,7 +33,7 @@ func TestRewrite(t *testing.T) {
 	w = httptest.NewRecorder()
 	r = httptest.NewRequest(http.MethodGet, "/doc", nil)
 	result = mid(w, r, &middleware.Context{})
-	if result != middleware.ProcessedGoNext {
+	if result != middleware.SkipRests {
 		t.Error(result)
 	}
 	if w.Code != 200 {
@@ -47,7 +47,7 @@ func TestRewrite(t *testing.T) {
 	r = httptest.NewRequest(http.MethodGet, "/doc/net/http", nil)
 	r.URL.RawPath = "/foo/bar/doc/net/http"
 	result = mid(w, r, &middleware.Context{})
-	if result != middleware.ProcessedGoNext {
+	if result != middleware.SkipRests {
 		t.Error(result)
 	}
 	if w.Code != 200 {

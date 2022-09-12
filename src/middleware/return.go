@@ -24,7 +24,7 @@ func getReturnStatusMiddleware(arg [2]string, outputMids []middleware.Middleware
 	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
 		requestURI := r.URL.RequestURI() // request uri without prefix path
 		if !reMatch.MatchString(requestURI) {
-			return middleware.SkippedGoNext
+			return middleware.GoNext
 		}
 
 		result = middleware.Outputted

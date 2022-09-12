@@ -25,10 +25,20 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 	// rewrites
 	rewriteMids := make([]middleware.Middleware, 0, len(param.Rewrites))
 	for i := range param.Rewrites {
-		mid, err := getRewriteMiddleware(param.Rewrites[i])
+		mid, err := getRewriteMiddleware(param.Rewrites[i], middleware.GoNext)
 		errs = serverError.AppendError(errs, err)
 		if mid != nil {
 			rewriteMids = append(rewriteMids, mid)
+		}
+	}
+
+	// rewrites end
+	rewriteEndMids := make([]middleware.Middleware, 0, len(param.RewritesEnd))
+	for i := range param.RewritesEnd {
+		mid, err := getRewriteMiddleware(param.RewritesEnd[i], middleware.SkipRests)
+		errs = serverError.AppendError(errs, err)
+		if mid != nil {
+			rewriteEndMids = append(rewriteEndMids, mid)
 		}
 	}
 
@@ -64,11 +74,13 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 
 	// combine all mids
 	preMids = make([]middleware.Middleware, 0, len(rewriteMids)+
+		len(rewriteEndMids)+
 		len(redirectMids)+
 		len(proxyMids)+
 		len(returnMids),
 	)
 	preMids = append(preMids, rewriteMids...)
+	preMids = append(preMids, rewriteEndMids...)
 	preMids = append(preMids, redirectMids...)
 	preMids = append(preMids, proxyMids...)
 	preMids = append(preMids, returnMids...)

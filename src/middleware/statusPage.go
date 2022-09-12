@@ -32,19 +32,19 @@ func getStatusPageMiddleware(arg [2]string) (middleware.Middleware, error) {
 
 	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
 		if context.Status != code {
-			return middleware.SkippedGoNext
+			return middleware.GoNext
 		}
 
 		file, err := os.Open(statusFile)
 		if err != nil {
 			util.LogError(context.Logger, err)
-			return middleware.SkippedGoNext
+			return middleware.GoNext
 		}
 
 		contentType, err := ghfsUtil.GetContentType(statusFile, file)
 		if err != nil {
 			util.LogError(context.Logger, err)
-			return middleware.SkippedGoNext
+			return middleware.GoNext
 		}
 		w.Header().Set("Content-Type", contentType)
 
