@@ -19,6 +19,9 @@ func NewCliCmd() *goNixArgParser.Command {
 	err = options.AddFlagValues("rewrites", "--rewrite", "", nil, "add rule to replace request URL, format <sep><match><sep><replace>")
 	serverError.CheckFatal(err)
 
+	err = options.AddFlagValues("rewritespost", "--rewrite-post", "", nil, "add rule to replace request URL after redirects, format <sep><match><sep><replace>")
+	serverError.CheckFatal(err)
+
 	err = options.AddFlagValues("rewritesend", "--rewrite-end", "", nil, "add rule to replace request URL, and skip further actions, format <sep><match><sep><replace>")
 	serverError.CheckFatal(err)
 
@@ -46,6 +49,10 @@ func CmdResultsToParams(results []*goNixArgParser.ParseResult) (params []*Param,
 		// rewrites
 		rewrites, _ := result.GetStrings("rewrites")
 		param.Rewrites = baseParam.SplitAllKeyValue(rewrites)
+
+		// rewrites post
+		rewritesPost, _ := result.GetStrings("rewritespost")
+		param.RewritesPost = baseParam.SplitAllKeyValue(rewritesPost)
 
 		// rewrites end
 		rewritesEnd, _ := result.GetStrings("rewritesend")

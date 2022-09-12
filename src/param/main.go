@@ -7,8 +7,9 @@ import (
 
 type Param struct {
 	// value: [match, replace]
-	Rewrites    [][2]string
-	RewritesEnd [][2]string
+	Rewrites     [][2]string
+	RewritesPost [][2]string
+	RewritesEnd  [][2]string
 	// value: [match, replace, code?]
 	Redirects [][3]string
 	// value: [match, replace]
