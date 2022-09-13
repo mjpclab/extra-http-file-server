@@ -46,12 +46,14 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 --return <分隔符><match><分隔符><status-code>
     当请求的URL（“/request/path?param=value”的形式）匹配正则表达式`match`时，
     立即返回状态码`status-code`并停止处理。
+--to-status <分隔符><match><分隔符><status-code>
+    与--return类似，但在ghfs内部处理流程完成后执行。
 
 --status-page <分隔符><status-code><分隔符><fs-path>
     当响应状态码为`status-code`时，用文件`fs-path`的内容来响应。
 ```
 
-## 选项处理顺序
+## 处理顺序
 
 - 如果URL匹配，执行`--rewrite`以转换URL。
 - 如果URL匹配，执行`--redirect`并停止处理。
@@ -59,6 +61,10 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 - 如果URL匹配，执行`--rewrite-end`以转换URL，跳过其余`--rewrite-end`，`--redirect`，`--proxy`和`--return`。
 - 如果URL匹配，执行`--proxy`并停止处理。
 - 如果URL匹配，执行`--return`。
+  - 如果状态码匹配，执行`--status-page`并停止处理。
+- ghfs内部处理流程
+- 如果URL匹配，执行`--to-status`。
+  - 如果状态码匹配，执行`--status-page`并停止处理。
 - 如果状态码匹配，执行`--status-page`并停止处理。
 
 ## 举例

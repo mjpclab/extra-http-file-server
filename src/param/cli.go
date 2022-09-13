@@ -34,6 +34,9 @@ func NewCliCmd() *goNixArgParser.Command {
 	err = options.AddFlagValues("returns", "--return", "", nil, "add rule to return status code, format <sep><match><sep><code>")
 	serverError.CheckFatal(err)
 
+	err = options.AddFlagValues("tostatuses", "--to-status", "", nil, "add rule to move to status code after ghfs internal process, format <sep><match><sep><code>")
+	serverError.CheckFatal(err)
+
 	err = options.AddFlagValues("statuspages", "--status-page", "", nil, "set page file for specific http status code, format <sep><status><sep><fs-path>")
 	serverError.CheckFatal(err)
 
@@ -77,6 +80,10 @@ func CmdResultsToParams(results []*goNixArgParser.ParseResult) (params []*Param,
 		// status pages
 		statusPages, _ := result.GetStrings("statuspages")
 		param.StatusPages = baseParam.SplitAllKeyValue(statusPages)
+
+		// to statuses
+		toStatuses, _ := result.GetStrings("tostatuses")
+		param.ToStatuses = baseParam.SplitAllKeyValue(toStatuses)
 
 		param.normalize()
 		params = append(params, param)

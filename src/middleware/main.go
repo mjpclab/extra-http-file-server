@@ -82,6 +82,16 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 		}
 	}
 
+	// to statuses
+	toStatusMids := make([]middleware.Middleware, 0, len(param.ToStatuses))
+	for i := range param.ToStatuses {
+		mid, err := getReturnStatusMiddleware(param.ToStatuses[i], statusPageMids)
+		errs = serverError.AppendError(errs, err)
+		if mid != nil {
+			toStatusMids = append(toStatusMids, mid)
+		}
+	}
+
 	// combine all mids
 	preMids = make([]middleware.Middleware, 0, len(rewriteMids)+
 		len(rewritePostMids)+
@@ -97,7 +107,10 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 	preMids = append(preMids, proxyMids...)
 	preMids = append(preMids, returnMids...)
 
-	postMids = make([]middleware.Middleware, 0, len(param.StatusPages))
+	postMids = make([]middleware.Middleware, 0, len(toStatusMids)+
+		len(statusPageMids),
+	)
+	postMids = append(postMids, toStatusMids...)
 	postMids = append(postMids, statusPageMids...)
 
 	return

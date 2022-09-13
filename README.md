@@ -47,12 +47,14 @@ This means it is impossible to use legacy Go version to compile binaries for leg
     When request URL (in the form of "/request/path?param=value")
     is matched by `match`, return the status code `status-code`
     immediately and stop processing.
+--to-status <separator><match><separator><status-code>
+    Similar to --return, but process after ghfs internal process finished.
 
 --status-page <separator><status-code><separator><fs-path>
     When response status is `status-code`, respond with the file content from `fs-path`.
 ```
 
-## Option processing order
+## Processing order
 
 - `--rewrite` executed to transform the URL if matched.
 - `--redirect` executed if URL matched, and stop processing.
@@ -60,6 +62,10 @@ This means it is impossible to use legacy Go version to compile binaries for leg
 - `--rewrite-end` executed to transform the URL if matched, and skip rest of `--rewrite-end`, `--redirect`, `--proxy` and `--return`.
 - `--proxy` executed if URL matched, and stop processing.
 - `--return` executed if URL matched.
+  - `--status-page` executed if status code matched, and stop processing.
+- ghfs internal process
+- `--to-status` executed if URL matched.
+  - `--status-page` executed if status code matched, and stop processing.
 - `--status-page` executed if status code matched, and stop processing.
 
 ## Examples

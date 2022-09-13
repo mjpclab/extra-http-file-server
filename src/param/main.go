@@ -18,6 +18,7 @@ type Param struct {
 	Returns [][2]string
 
 	// value: [code, file]
+	ToStatuses  [][2]string
 	StatusPages [][2]string
 }
 
