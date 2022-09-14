@@ -5,9 +5,7 @@ import (
 	"mjpclab.dev/ehfs/src/util"
 	"mjpclab.dev/ghfs/src/middleware"
 	"mjpclab.dev/ghfs/src/serverHandler"
-	ghfsUtil "mjpclab.dev/ghfs/src/util"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strconv"
 )
@@ -35,24 +33,12 @@ func getStatusPageMiddleware(arg [2]string) (middleware.Middleware, error) {
 			return middleware.GoNext
 		}
 
-		file, err := os.Open(statusFile)
+		file, info, contentType, err := util.GetFileInfoType(statusFile)
 		if err != nil {
 			util.LogError(context.Logger, err)
 			return middleware.GoNext
 		}
 		defer file.Close()
-
-		info, err := file.Stat()
-		if err != nil {
-			util.LogError(context.Logger, err)
-			return middleware.GoNext
-		}
-
-		contentType, err := ghfsUtil.GetContentType(statusFile, file)
-		if err != nil {
-			util.LogError(context.Logger, err)
-			return middleware.GoNext
-		}
 
 		header := w.Header()
 		header.Set("Last-Modified", info.ModTime().UTC().Format(http.TimeFormat))
