@@ -20,9 +20,9 @@ This means it is impossible to use legacy Go version to compile binaries for leg
     The rewrite target is specified by `replace`.
     Use `$0` to represent the whole match in `match`.
     use `$1` - `$9` to represent sub matches in `match`.
---rewrite-post <分隔符><match><分隔符><replace>
+--rewrite-post <sep><match><sep><replace>
     Similar to --rewrite, but executes after redirects has no match.
---rewrite-end <分隔符><match><分隔符><replace>
+--rewrite-end <sep><match><sep><replace>
     Similar to --rewrite-post, but skip rest process if matched.
 
 --redirect <separator><match><separator><replace>[<separator><status-code>]
