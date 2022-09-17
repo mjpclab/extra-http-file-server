@@ -76,3 +76,23 @@ Perform redirect according to `redirect` param:
 # when requesting http://localhost:8080/redirect/www.example.com, redirect to https://www.example.com
 ehfs -l 8080 -r /path/to/share --redirect '#/redirect/(.*)#https://$1'
 ```
+
+Serve static page without `.html` suffix in URL:
+- redirect URL contains `.html` suffix to no suffix
+- rewrite URL without suffix to with `.html` suffix 
+
+```sh
+ehfs -l 8080 -r /path/to/share --redirect '#(.*)\.html#$1' --rewrite-post '#^.*/[^/.]+$#$0.html'
+```
+
+Specify page for 404 status:
+
+```sh
+ehfs -l 8080 -r /path/to/share --status-page '#404#/path/to/404/file'
+```
+
+Refuse to serve for critical files or directories, returns 403 status:
+
+```sh
+ehfs -l 8080 -r /path/to/share --return '#.git|.htaccess#403'
+```

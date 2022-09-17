@@ -75,3 +75,23 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 # 当请求 http://localhost:8080/redirect/www.example.com时，重定向到https://www.example.com
 ehfs -l 8080 -r /path/to/share --redirect '#/redirect/(.*)#https://$1'
 ```
+
+访问静态页面URL无须包含`.html`后缀：
+- 将包含`.html`后缀的URL重定向到不包含的
+- 重写不包含`.html`后缀的URL至带有后缀
+
+```sh
+ehfs -l 8080 -r /path/to/share --redirect '#(.*)\.html#$1' --rewrite-post '#^.*/[^/.]+$#$0.html'
+```
+
+指定404状态页文件：
+
+```sh
+ehfs -l 8080 -r /path/to/share --status-page '#404#/path/to/404/file'
+```
+
+拒绝显示关键性文件或目录，返回403状态：
+
+```sh
+ehfs -l 8080 -r /path/to/share --return '#.git|.htaccess#403'
+```
