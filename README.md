@@ -13,6 +13,16 @@ This means it is impossible to use legacy Go version to compile binaries for leg
 ## New options
 
 ```
+--ip-allow <IP>|<network/prefix> ...
+--ip-allow-file <file> ...
+    Only allow client access from specific IP or network.
+    Unmatched client IP will be denied.
+
+--ip-deny <IP>|<network/prefix> ...
+--ip-deny-file <file> ...
+    Only denly client access from specific IP or network.
+    Unmatched client IP will be allowed to access.
+
 --rewrite <separator><match><separator><replace>
     Transform a request URL (in the form of "/request/path?param=value")
     into another one if it is matched by regular expression `match`.
@@ -56,15 +66,19 @@ This means it is impossible to use legacy Go version to compile binaries for leg
 
 ## Processing order
 
+- if client IP not match `--ip-allow` or `--ip-allow-file`, return status 403, and stop processing
+  - `--status-page` executed if status code matched, and stop processing.
+- if client IP match `--ip-deny` or `--ip-deny-file`, return status 403, and stop processing
+  - `--status-page` executed if status code matched, and stop processing.
 - `--rewrite` executed to transform the URL if matched.
 - `--redirect` executed if URL matched, and stop processing.
 - `--rewrite-post` executed to transform the URL if matched.
 - `--rewrite-end` executed to transform the URL if matched, and skip rest of `--rewrite-end`, `--redirect`, `--proxy` and `--return`.
 - `--proxy` executed if URL matched, and stop processing.
-- `--return` executed if URL matched.
+- `--return` executed if URL matched, and stop processing.
   - `--status-page` executed if status code matched, and stop processing.
 - ghfs internal process
-- `--to-status` executed if URL matched.
+- `--to-status` executed if URL matched, and stop processing.
   - `--status-page` executed if status code matched, and stop processing.
 - `--status-page` executed if status code matched, and stop processing.
 

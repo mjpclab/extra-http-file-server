@@ -13,6 +13,16 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 ## 新增选项
 
 ```
+--ip-allow <IP>|<network/prefix> ...
+--ip-allow-file <file> ...
+    只允许来自指定的IP或网络的客户端访问。
+    不匹配的客户端IP会被拒绝访问。
+
+--ip-deny <IP>|<network/prefix> ...
+--ip-deny-file <file> ...
+    只拒绝来自指定的IP或网络的客户端访问。
+    不匹配的客户端IP会被允许访问。
+
 --rewrite <分隔符><match><分隔符><replace>
     如果请求的URL（“/request/path?param=value”的形式）匹配正则表达式`match`，
     将其重写为另一种形式。
@@ -55,15 +65,19 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 
 ## 处理顺序
 
+- 如果客户端IP不匹配`--ip-allow`或`--ip-allow-file`，返回403状态并停止处理
+  - 如果状态码匹配，执行`--status-page`并停止处理。
+- 如果客户端IP匹配`--ip-deny`或`--ip-deny-file`，返回403状态并停止处理
+  - 如果状态码匹配，执行`--status-page`并停止处理。
 - 如果URL匹配，执行`--rewrite`以转换URL。
 - 如果URL匹配，执行`--redirect`并停止处理。
 - 如果URL匹配，执行`--rewrite-post`以转换URL。
 - 如果URL匹配，执行`--rewrite-end`以转换URL，跳过其余`--rewrite-end`，`--redirect`，`--proxy`和`--return`。
 - 如果URL匹配，执行`--proxy`并停止处理。
-- 如果URL匹配，执行`--return`。
+- 如果URL匹配，执行`--return`并停止处理。
   - 如果状态码匹配，执行`--status-page`并停止处理。
 - ghfs内部处理流程
-- 如果URL匹配，执行`--to-status`。
+- 如果URL匹配，执行`--to-status`并停止处理。
   - 如果状态码匹配，执行`--status-page`并停止处理。
 - 如果状态码匹配，执行`--status-page`并停止处理。
 

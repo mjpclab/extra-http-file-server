@@ -16,6 +16,18 @@ func NewCliCmd() *goNixArgParser.Command {
 	// define option
 	var err error
 
+	err = options.AddFlagValues("ipallows", "--ip-allow", "", nil, "specify allowed client IP, rests are denied")
+	serverError.CheckFatal(err)
+
+	err = options.AddFlagValues("ipallowfiles", "--ip-allow-file", "", nil, "specify allowed client IP from files, rests are denied")
+	serverError.CheckFatal(err)
+
+	err = options.AddFlagValues("ipdenies", "--ip-deny", "", nil, "specify denied client IP, rests are allowed if no allow list")
+	serverError.CheckFatal(err)
+
+	err = options.AddFlagValues("ipdenyfiles", "--ip-deny-file", "", nil, "specify denied client IP from files, rests are allowed if no allow list")
+	serverError.CheckFatal(err)
+
 	err = options.AddFlagValues("rewrites", "--rewrite", "", nil, "add rule to replace request URL, format <sep><match><sep><replace>")
 	serverError.CheckFatal(err)
 
@@ -48,6 +60,12 @@ func CmdResultsToParams(results []*goNixArgParser.ParseResult) (params []*Param,
 
 	for _, result := range results {
 		param := &Param{}
+
+		// IP allows/denies
+		param.IPAllows, _ = result.GetStrings("ipallows")
+		param.IPAllowFiles, _ = result.GetStrings("ipallowfiles")
+		param.IPDenies, _ = result.GetStrings("ipdenies")
+		param.IPDenyFiles, _ = result.GetStrings("ipdenyfiles")
 
 		// rewrites
 		rewrites, _ := result.GetStrings("rewrites")

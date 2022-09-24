@@ -6,6 +6,10 @@ import (
 )
 
 type Param struct {
+	IPAllows     []string
+	IPAllowFiles []string
+	IPDenies     []string
+	IPDenyFiles  []string
 	// value: [match, replace]
 	Rewrites     [][2]string
 	RewritesPost [][2]string
