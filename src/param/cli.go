@@ -80,12 +80,8 @@ func CmdResultsToParams(results []*goNixArgParser.ParseResult) (params []*Param,
 		param.RewritesEnd = baseParam.SplitAllKeyValue(rewritesEnd)
 
 		// redirects
-		strRedirects, _ := result.GetStrings("redirects")
-		redirects := baseParam.SplitAllKeyValues(strRedirects)
-		param.Redirects = make([][3]string, len(redirects))
-		for i := range redirects {
-			copy(param.Redirects[i][:], redirects[i])
-		}
+		redirects, _ := result.GetStrings("redirects")
+		param.Redirects = toString3s(redirects)
 
 		// proxies
 		proxies, _ := result.GetStrings("proxies")
@@ -95,13 +91,13 @@ func CmdResultsToParams(results []*goNixArgParser.ParseResult) (params []*Param,
 		returns, _ := result.GetStrings("returns")
 		param.Returns = baseParam.SplitAllKeyValue(returns)
 
-		// status pages
-		statusPages, _ := result.GetStrings("statuspages")
-		param.StatusPages = baseParam.SplitAllKeyValue(statusPages)
-
 		// to statuses
 		toStatuses, _ := result.GetStrings("tostatuses")
 		param.ToStatuses = baseParam.SplitAllKeyValue(toStatuses)
+
+		// status pages
+		statusPages, _ := result.GetStrings("statuspages")
+		param.StatusPages = baseParam.SplitAllKeyValue(statusPages)
 
 		param.normalize()
 		params = append(params, param)
