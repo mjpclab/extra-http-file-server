@@ -4,10 +4,8 @@ import (
 	"mjpclab.dev/ehfs/src/util"
 	"mjpclab.dev/ghfs/src/middleware"
 	"net/http"
-	"net/url"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
 func getRedirectMiddleware(arg [3]string) (middleware.Middleware, error) {
@@ -31,21 +29,9 @@ func getRedirectMiddleware(arg [3]string) (middleware.Middleware, error) {
 		if !reMatch.MatchString(requestURI) {
 			return middleware.GoNext
 		}
-		matches := reMatch.FindStringSubmatch(requestURI)
-		if len(matches) > 10 {
-			matches = matches[:10]
-		}
-
-		target := replace
-		for i := range matches {
-			target = strings.ReplaceAll(target, "$"+strconv.Itoa(i), matches[i])
-		}
-		if len(target) == 0 {
-			target = "/"
-		}
 
 		result = middleware.Outputted
-		targetUrl, err := url.Parse(target)
+		targetUrl, err := util.ReplaceUrl(reMatch, requestURI, replace)
 		if err != nil {
 			util.LogError(context.Logger, err)
 			w.WriteHeader(http.StatusBadRequest)
