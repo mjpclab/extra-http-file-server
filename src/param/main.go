@@ -22,6 +22,10 @@ type Param struct {
 	// value: [match, code]
 	Returns [][2]string
 
+	// value: [match, name, value]
+	HeaderAdds [][3]string
+	// value: [match, name, value]
+	HeaderSets [][3]string
 	// value: [match, code]
 	ToStatuses [][2]string
 	// value: [code, file]
@@ -55,6 +59,8 @@ func (param *Param) normalize() {
 	param.Proxies = util.Filter(param.Proxies, nonEmptyKeyString2)
 	param.Returns = util.Filter(param.Returns, nonEmptyKeyString2)
 
+	param.HeaderAdds = util.Filter(param.HeaderAdds, nonEmptyString3)
+	param.HeaderSets = util.Filter(param.HeaderSets, nonEmptyString3)
 	param.ToStatuses = util.Filter(param.ToStatuses, nonEmptyKeyString2)
 	param.StatusPages = util.Filter(param.StatusPages, nonEmptyKeyString2)
 

@@ -3,6 +3,7 @@ package middleware
 import (
 	"errors"
 	"mjpclab.dev/ehfs/src/param"
+	"mjpclab.dev/ehfs/src/util"
 	"mjpclab.dev/ghfs/src/middleware"
 	baseParam "mjpclab.dev/ghfs/src/param"
 	"mjpclab.dev/ghfs/src/serverError"
@@ -16,7 +17,24 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 	var err error
 	var es []error
 
-	// status pages
+	// headers
+	headerMids := make([]middleware.Middleware, 0, len(param.HeaderAdds)+len(param.HeaderSets))
+	for i := range param.HeaderAdds {
+		mid, err = getHeaderAddMiddleware(param.HeaderAdds[i])
+		errs = serverError.AppendError(errs, err)
+		if mid != nil {
+			headerMids = append(headerMids, mid)
+		}
+	}
+	for i := range param.HeaderSets {
+		mid, err = getHeaderSetMiddleware(param.HeaderSets[i])
+		errs = serverError.AppendError(errs, err)
+		if mid != nil {
+			headerMids = append(headerMids, mid)
+		}
+	}
+
+	// dependent: status pages
 	statusPageMids := make([]middleware.Middleware, 0, len(param.StatusPages))
 	for i := range param.StatusPages {
 		mid, err = getStatusPageMiddleware(param.StatusPages[i])
@@ -85,7 +103,7 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 	// proxies
 	proxyMids := make([]middleware.Middleware, 0, len(param.Proxies))
 	for i := range param.Proxies {
-		mid, err = getProxyMiddleware(param.Proxies[i])
+		mid, err = getProxyMiddleware(param.Proxies[i], headerMids)
 		errs = serverError.AppendError(errs, err)
 		if mid != nil {
 			proxyMids = append(proxyMids, mid)
@@ -95,12 +113,14 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 	// returns
 	returnMids := make([]middleware.Middleware, 0, len(param.Returns))
 	for i := range param.Returns {
-		mid, err = getReturnStatusMiddleware(param.Returns[i], statusPageMids)
+		mid, err = getReturnStatusMiddleware(param.Returns[i], util.Concat(headerMids, statusPageMids))
 		errs = serverError.AppendError(errs, err)
 		if mid != nil {
 			returnMids = append(returnMids, mid)
 		}
 	}
+
+	// headers (moved to dependent)
 
 	// to statuses
 	toStatusMids := make([]middleware.Middleware, 0, len(param.ToStatuses))
@@ -112,32 +132,25 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 		}
 	}
 
-	// combine all mids
-	preMids = make([]middleware.Middleware, 0, 0+
-		len(ipAllowMids)+
-		len(ipDenyMids)+
-		len(rewriteMids)+
-		len(rewritePostMids)+
-		len(rewriteEndMids)+
-		len(redirectMids)+
-		len(proxyMids)+
-		len(returnMids),
-	)
-	preMids = append(preMids, ipAllowMids...)
-	preMids = append(preMids, ipDenyMids...)
-	preMids = append(preMids, rewriteMids...)
-	preMids = append(preMids, redirectMids...)
-	preMids = append(preMids, rewritePostMids...)
-	preMids = append(preMids, rewriteEndMids...)
-	preMids = append(preMids, proxyMids...)
-	preMids = append(preMids, returnMids...)
+	// status pages (moved to dependent)
 
-	postMids = make([]middleware.Middleware, 0, 0+
-		len(toStatusMids)+
-		len(statusPageMids),
+	// combine mids
+	preMids = util.Concat(
+		ipAllowMids,
+		ipDenyMids,
+		rewriteMids,
+		redirectMids,
+		rewritePostMids,
+		rewriteEndMids,
+		proxyMids,
+		returnMids,
 	)
-	postMids = append(postMids, toStatusMids...)
-	postMids = append(postMids, statusPageMids...)
+
+	postMids = util.Concat(
+		headerMids,
+		toStatusMids,
+		statusPageMids,
+	)
 
 	return
 }

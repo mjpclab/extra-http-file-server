@@ -62,6 +62,11 @@ This means it is impossible to use legacy Go version to compile binaries for leg
 
 --status-page <separator><status-code><separator><fs-path>
     When response status is `status-code`, respond with the file content from `fs-path`.
+
+--header-add <separator><match><separator><name><separator><value>
+--header-set <separator><match><separator><name><separator><value>
+    Add or set response header if URL(in the form of "/request/path?param=value")
+    matches `match`.
 ```
 
 ## Processing order
@@ -75,9 +80,12 @@ This means it is impossible to use legacy Go version to compile binaries for leg
 - `--rewrite-post` executed to transform the URL if matched.
 - `--rewrite-end` executed to transform the URL if matched, and skip rest of `--rewrite-end`, `--redirect`, `--proxy` and `--return`.
 - `--proxy` executed if URL matched, and stop processing.
+  - `--header-add` and `--header-set` executed if URL matched, and stop processing.
 - `--return` executed if URL matched, and stop processing.
+  - `--header-add` and `--header-set` executed if URL matched, and stop processing.
   - `--status-page` executed if status code matched, and stop processing.
 - ghfs internal process
+- `--header-add` and `--header-set` executed if URL matched.
 - `--to-status` executed if URL matched, and stop processing.
   - `--status-page` executed if status code matched, and stop processing.
 - `--status-page` executed if status code matched, and stop processing.

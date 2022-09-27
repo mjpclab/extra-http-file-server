@@ -8,7 +8,7 @@ import (
 	"regexp"
 )
 
-func getProxyMiddleware(arg [2]string) (middleware.Middleware, error) {
+func getProxyMiddleware(arg [2]string, preOutputMids []middleware.Middleware) (middleware.Middleware, error) {
 	var err error
 	var reMatch *regexp.Regexp
 	var replace string
@@ -30,6 +30,10 @@ func getProxyMiddleware(arg [2]string) (middleware.Middleware, error) {
 		}
 
 		result = middleware.Outputted
+		for i := range preOutputMids {
+			preOutputMids[i](w, r, context)
+		}
+
 		targetUrl, err := util.ReplaceUrl(reMatch, requestURI, replace)
 		if err != nil {
 			util.LogError(context.Logger, err)

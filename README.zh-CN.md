@@ -61,6 +61,11 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 
 --status-page <分隔符><status-code><分隔符><fs-path>
     当响应状态码为`status-code`时，用文件`fs-path`的内容来响应。
+
+--header-add <分隔符><match><分隔符><name><分隔符><value>
+--header-set <分隔符><match><分隔符><name><分隔符><value>
+    当请求的URL（“/request/path?param=value”的形式）匹配正则表达式`match`时，
+    添加或设置响应头。
 ```
 
 ## 处理顺序
@@ -74,9 +79,12 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 - 如果URL匹配，执行`--rewrite-post`以转换URL。
 - 如果URL匹配，执行`--rewrite-end`以转换URL，跳过其余`--rewrite-end`，`--redirect`，`--proxy`和`--return`。
 - 如果URL匹配，执行`--proxy`并停止处理。
+  - 如果URL匹配，执行`--header-add`和`--header-set`并停止处理。
 - 如果URL匹配，执行`--return`并停止处理。
+  - 如果URL匹配，执行`--header-add`和`--header-set`并停止处理。
   - 如果状态码匹配，执行`--status-page`并停止处理。
 - ghfs内部处理流程
+- 如果URL匹配，执行`--header-add`和`--header-set`。
 - 如果URL匹配，执行`--to-status`并停止处理。
   - 如果状态码匹配，执行`--status-page`并停止处理。
 - 如果状态码匹配，执行`--status-page`并停止处理。

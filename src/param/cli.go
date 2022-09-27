@@ -46,6 +46,12 @@ func NewCliCmd() *goNixArgParser.Command {
 	err = options.AddFlagValues("returns", "--return", "", nil, "add rule to return status code, format <sep><match><sep><code>")
 	serverError.CheckFatal(err)
 
+	err = options.AddFlagValues("headeradds", "--header-add", "", nil, "add response header, format <sep><match><sep><name><sep><value>")
+	serverError.CheckFatal(err)
+
+	err = options.AddFlagValues("headersets", "--header-set", "", nil, "set response header, format <sep><match><sep><name><sep><value>")
+	serverError.CheckFatal(err)
+
 	err = options.AddFlagValues("tostatuses", "--to-status", "", nil, "add rule to move to status code after ghfs internal process, format <sep><match><sep><code>")
 	serverError.CheckFatal(err)
 
@@ -90,6 +96,12 @@ func CmdResultsToParams(results []*goNixArgParser.ParseResult) (params []*Param,
 		// returns
 		returns, _ := result.GetStrings("returns")
 		param.Returns = baseParam.SplitAllKeyValue(returns)
+
+		// headers
+		headerAdds, _ := result.GetStrings("headeradds")
+		param.HeaderAdds = toString3s(headerAdds)
+		headerSets, _ := result.GetStrings("headersets")
+		param.HeaderSets = toString3s(headerSets)
 
 		// to statuses
 		toStatuses, _ := result.GetStrings("tostatuses")

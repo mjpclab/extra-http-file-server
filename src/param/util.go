@@ -8,12 +8,24 @@ func nonEmptyString(item string) bool {
 	return len(item) > 0
 }
 
+func nonEmptyString2(item [2]string) bool {
+	return len(item[0]) > 0 && len(item[1]) > 0
+}
+
+func nonEmptyString3(item [3]string) bool {
+	return len(item[0]) > 0 && len(item[1]) > 0 && len(item[2]) > 0
+}
+
 func nonEmptyKeyString2(item [2]string) bool {
 	return len(item[0]) > 0
 }
 
 func nonEmptyKeyString3(item [3]string) bool {
 	return len(item[0]) > 0
+}
+
+func nonEmptyKeysString3(item [3]string) bool {
+	return len(item[0]) > 0 && len(item[1]) > 0
 }
 
 func toString3s(inputs []string) (outputs [][3]string) {
