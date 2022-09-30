@@ -23,6 +23,18 @@ This means it is impossible to use legacy Go version to compile binaries for leg
     Only denly client access from specific IP or network.
     Unmatched client IP will be allowed to access.
 
+--rewrite-host <separator><match><separator><replace>
+    Transform a request host+URL (in the form of "host[:port]/request/path?param=value")
+    into another one if it is matched by regular expression `match`.
+
+    The rewrite target is specified by `replace`.
+    Use `$0` to represent the whole match in `match`.
+    use `$1` - `$9` to represent sub matches in `match`.
+--rewrite-host-post <sep><match><sep><replace>
+    Similar to --rewrite-host, but executes after redirects has no match.
+--rewrite-host-end <sep><match><sep><replace>
+    Similar to --rewrite-host-post, but skip rest process if matched.
+
 --rewrite <separator><match><separator><replace>
     Transform a request URL (in the form of "/request/path?param=value")
     into another one if it is matched by regular expression `match`.
@@ -75,10 +87,10 @@ This means it is impossible to use legacy Go version to compile binaries for leg
   - `--status-page` executed if status code matched, and stop processing.
 - if client IP match `--ip-deny` or `--ip-deny-file`, return status 403, and stop processing
   - `--status-page` executed if status code matched, and stop processing.
-- `--rewrite` executed to transform the URL if matched.
+- `--rewrite-host` and `--rewrite` executed to transform the URL if matched.
 - `--redirect` executed if URL matched, and stop processing.
-- `--rewrite-post` executed to transform the URL if matched.
-- `--rewrite-end` executed to transform the URL if matched, and skip rest of `--rewrite-end`, `--redirect`, `--proxy` and `--return`.
+- `--rewrite-host-post` and `--rewrite-post` executed to transform the URL if matched.
+- `--rewrite-host-end` and `--rewrite-end` executed to transform the URL if matched, and skip rest processes like `--rewrite[-host]-end`, `--proxy` `--return`, etc.
 - `--proxy` executed if URL matched, and stop processing.
   - `--header-add` and `--header-set` executed if URL matched, and stop processing.
 - `--return` executed if URL matched, and stop processing.

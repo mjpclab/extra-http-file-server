@@ -23,6 +23,18 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
     只拒绝来自指定的IP或网络的客户端访问。
     不匹配的客户端IP会被允许访问。
 
+--rewrite-host <分隔符><match><分隔符><replace>
+    如果请求的host+URL（“host[:port]/request/path?param=value”的形式）匹配正则表达式`match`，
+    将其重写为另一种形式。
+
+    重写的目标由`replace`指定。
+    使用`$0`表示`match`的完整匹配。
+    使用`$1`-`$9`来表示`match`中的子匹配。
+--rewrite-host-post <分隔符><match><分隔符><replace>
+    与--rewrite-host相似，但在重定向无匹配后执行。
+--rewrite-host-end <分隔符><match><分隔符><replace>
+    与--rewrite-host-post相似，但匹配后跳过后续处理流程。
+
 --rewrite <分隔符><match><分隔符><replace>
     如果请求的URL（“/request/path?param=value”的形式）匹配正则表达式`match`，
     将其重写为另一种形式。
@@ -74,10 +86,10 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
   - 如果状态码匹配，执行`--status-page`并停止处理。
 - 如果客户端IP匹配`--ip-deny`或`--ip-deny-file`，返回403状态并停止处理
   - 如果状态码匹配，执行`--status-page`并停止处理。
-- 如果URL匹配，执行`--rewrite`以转换URL。
+- 如果URL匹配，执行`--rewrite-host`和`--rewrite`以转换URL。
 - 如果URL匹配，执行`--redirect`并停止处理。
-- 如果URL匹配，执行`--rewrite-post`以转换URL。
-- 如果URL匹配，执行`--rewrite-end`以转换URL，跳过其余`--rewrite-end`，`--redirect`，`--proxy`和`--return`。
+- 如果URL匹配，执行`--rewrite-host-post`和`--rewrite-post`以转换URL。
+- 如果URL匹配，执行`--rewrite-host-end`和`--rewrite-end`以转换URL，跳过其余处理流程，例如`--rewrite[-host]-end`、`--proxy`、`--return`等。
 - 如果URL匹配，执行`--proxy`并停止处理。
   - 如果URL匹配，执行`--header-add`和`--header-set`并停止处理。
 - 如果URL匹配，执行`--return`并停止处理。

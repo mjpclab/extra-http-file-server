@@ -8,8 +8,8 @@ import (
 
 var matchPlaceHolders = [...]string{"$0", "$1", "$2", "$3", "$4", "$5", "$6", "$7", "$8", "$9"}
 
-func ReplaceUrl(reMatch *regexp.Regexp, find, replace string) (*url.URL, error) {
-	matches := reMatch.FindStringSubmatch(find)
+func ReplaceUrl(reMatch *regexp.Regexp, toMatch, newUrl string) (*url.URL, error) {
+	matches := reMatch.FindStringSubmatch(toMatch)
 	if len(matches) > len(matchPlaceHolders) {
 		matches = matches[:len(matchPlaceHolders)]
 	}
@@ -19,7 +19,7 @@ func ReplaceUrl(reMatch *regexp.Regexp, find, replace string) (*url.URL, error) 
 		replacerParam = append(replacerParam, matchPlaceHolders[i], matches[i])
 	}
 	replacer := strings.NewReplacer(replacerParam...)
-	target := replacer.Replace(replace)
+	target := replacer.Replace(newUrl)
 
 	if len(target) == 0 {
 		target = "/"

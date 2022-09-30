@@ -28,6 +28,15 @@ func NewCliCmd() *goNixArgParser.Command {
 	err = options.AddFlagValues("ipdenyfiles", "--ip-deny-file", "", nil, "specify denied client IP from files, rests are allowed if no allow list")
 	serverError.CheckFatal(err)
 
+	err = options.AddFlagValues("rewritehosts", "--rewrite-host", "", nil, "add rule to replace request URL by host+request_URL, format <sep><match><sep><replace>")
+	serverError.CheckFatal(err)
+
+	err = options.AddFlagValues("rewritehostspost", "--rewrite-host-post", "", nil, "add rule to replace request URL by host+request_URL after redirects, format <sep><match><sep><replace>")
+	serverError.CheckFatal(err)
+
+	err = options.AddFlagValues("rewritehostsend", "--rewrite-host-end", "", nil, "add rule to replace request URL by host+request_URL, and skip further actions, format <sep><match><sep><replace>")
+	serverError.CheckFatal(err)
+
 	err = options.AddFlagValues("rewrites", "--rewrite", "", nil, "add rule to replace request URL, format <sep><match><sep><replace>")
 	serverError.CheckFatal(err)
 
@@ -72,6 +81,18 @@ func CmdResultsToParams(results []*goNixArgParser.ParseResult) (params []*Param,
 		param.IPAllowFiles, _ = result.GetStrings("ipallowfiles")
 		param.IPDenies, _ = result.GetStrings("ipdenies")
 		param.IPDenyFiles, _ = result.GetStrings("ipdenyfiles")
+
+		// rewrite hosts
+		rewriteHosts, _ := result.GetStrings("rewritehosts")
+		param.RewriteHosts = baseParam.SplitAllKeyValue(rewriteHosts)
+
+		// rewrite hosts post
+		rewritesHostsPost, _ := result.GetStrings("rewritehostspost")
+		param.RewriteHostsPost = baseParam.SplitAllKeyValue(rewritesHostsPost)
+
+		// rewrite hosts end
+		rewriteHostsEnd, _ := result.GetStrings("rewritehostsend")
+		param.RewriteHostsEnd = baseParam.SplitAllKeyValue(rewriteHostsEnd)
 
 		// rewrites
 		rewrites, _ := result.GetStrings("rewrites")

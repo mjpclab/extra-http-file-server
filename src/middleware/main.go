@@ -60,6 +60,36 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 		ipDenyMids = append(ipDenyMids, mid)
 	}
 
+	// rewrite hosts
+	rewriteHostMids := make([]middleware.Middleware, 0, len(param.RewriteHosts))
+	for i := range param.RewriteHosts {
+		mid, err = getRewriteHostMiddleware(param.RewriteHosts[i], middleware.GoNext)
+		errs = serverError.AppendError(errs, err)
+		if mid != nil {
+			rewriteHostMids = append(rewriteHostMids, mid)
+		}
+	}
+
+	// rewrite hosts post
+	rewriteHostPostMids := make([]middleware.Middleware, 0, len(param.RewriteHostsPost))
+	for i := range param.RewriteHostsPost {
+		mid, err = getRewriteHostMiddleware(param.RewriteHostsPost[i], middleware.GoNext)
+		errs = serverError.AppendError(errs, err)
+		if mid != nil {
+			rewriteHostPostMids = append(rewriteHostPostMids, mid)
+		}
+	}
+
+	// rewrite hosts end
+	rewriteHostEndMids := make([]middleware.Middleware, 0, len(param.RewriteHostsEnd))
+	for i := range param.RewriteHostsEnd {
+		mid, err = getRewriteHostMiddleware(param.RewriteHostsEnd[i], middleware.SkipRests)
+		errs = serverError.AppendError(errs, err)
+		if mid != nil {
+			rewriteHostEndMids = append(rewriteHostEndMids, mid)
+		}
+	}
+
 	// rewrites
 	rewriteMids := make([]middleware.Middleware, 0, len(param.Rewrites))
 	for i := range param.Rewrites {
@@ -138,9 +168,12 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 	preMids = util.Concat(
 		ipAllowMids,
 		ipDenyMids,
+		rewriteHostMids,
 		rewriteMids,
 		redirectMids,
+		rewriteHostPostMids,
 		rewritePostMids,
+		rewriteHostEndMids,
 		rewriteEndMids,
 		proxyMids,
 		returnMids,

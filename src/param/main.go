@@ -12,9 +12,12 @@ type Param struct {
 	IPDenies     []string
 	IPDenyFiles  []string
 	// value: [match, replace]
-	Rewrites     [][2]string
-	RewritesPost [][2]string
-	RewritesEnd  [][2]string
+	RewriteHosts     [][2]string
+	RewriteHostsPost [][2]string
+	RewriteHostsEnd  [][2]string
+	Rewrites         [][2]string
+	RewritesPost     [][2]string
+	RewritesEnd      [][2]string
 	// value: [match, replace, code?]
 	Redirects [][3]string
 	// value: [match, replace]
