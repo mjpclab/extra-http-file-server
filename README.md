@@ -25,7 +25,7 @@ This means it is impossible to use legacy Go version to compile binaries for leg
 
 --rewrite-host <separator><match><separator><replace>
     Transform a request host+URL (in the form of "host[:port]/request/path?param=value")
-    into another one if it is matched by regular expression `match`.
+    into another URL if it is matched by regular expression `match`.
 
     The rewrite target is specified by `replace`.
     Use `$0` to represent the whole match in `match`.
@@ -130,3 +130,10 @@ Refuse to serve for critical files or directories, returns 403 status:
 ```sh
 ehfs -l 8080 -r /path/to/share --return '#.git|.htaccess#403'
 ```
+
+## Compile
+Minimal required Go version is 1.18.
+```sh
+go build main.go
+```
+Will generate executable file "main" in current directory.

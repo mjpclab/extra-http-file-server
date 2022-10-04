@@ -25,7 +25,7 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 
 --rewrite-host <分隔符><match><分隔符><replace>
     如果请求的host+URL（“host[:port]/request/path?param=value”的形式）匹配正则表达式`match`，
-    将其重写为另一种形式。
+    将其重写为另一URL。
 
     重写的目标由`replace`指定。
     使用`$0`表示`match`的完整匹配。
@@ -129,3 +129,10 @@ ehfs -l 8080 -r /path/to/share --status-page '#404#/path/to/404/file'
 ```sh
 ehfs -l 8080 -r /path/to/share --return '#.git|.htaccess#403'
 ```
+
+## 编译
+至少需要Go 1.18版本。
+```sh
+go build main.go
+```
+会在当前目录生成"main"可执行文件。
