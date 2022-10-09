@@ -42,21 +42,35 @@ func getProxyMiddleware(arg [2]string, preOutputMids []middleware.Middleware) (m
 		}
 
 		targetUrl = r.URL.ResolveReference(targetUrl)
-		if (len(targetUrl.Host) == 0 || targetUrl.Host == r.Host) && targetUrl.RequestURI() == r.RequestURI {
+		if len(targetUrl.Host) == 0 {
+			targetUrl.Host = r.Host
+		}
+		if targetUrl.Host == r.Host && targetUrl.RequestURI() == r.RequestURI {
 			util.LogErrorString(context.Logger, "proxy to self URL")
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		rProxy, err := http.NewRequest(r.Method, targetUrl.String(), r.Body)
-		if err != nil {
-			util.LogError(context.Logger, err)
-			w.WriteHeader(http.StatusBadRequest)
-			return
+		if len(targetUrl.Scheme) == 0 {
+			if len(r.URL.Scheme) > 0 {
+				targetUrl.Scheme = r.URL.Scheme
+			} else if r.TLS != nil {
+				targetUrl.Scheme = "https"
+			} else {
+				targetUrl.Scheme = "http"
+			}
 		}
 
-		rProxy.Header = r.Header
-		proxy.ServeHTTP(w, rProxy)
+		proxyReq := &http.Request{
+			Method: r.Method,
+			URL:    targetUrl,
+			Body:   r.Body,
+			Header: r.Header.Clone(),
+		}
+
+		proxyReq.Header.Set("Referer", targetUrl.RequestURI())
+		proxyReq.Header.Set("Origin", targetUrl.Scheme+"://"+targetUrl.Host)
+		proxy.ServeHTTP(w, proxyReq)
 		return
 	}, nil
 }
