@@ -38,6 +38,10 @@ func getRedirectMiddleware(arg [3]string) (middleware.Middleware, error) {
 			return
 		}
 
+		if prefixLen := len(context.PrefixReqPath) - len(context.VhostReqPath); prefixLen > 0 && len(targetUrl.Host) == 0 {
+			prefix := context.PrefixReqPath[:prefixLen]
+			targetUrl.Path = prefix + targetUrl.Path
+		}
 		targetUrl = r.URL.ResolveReference(targetUrl)
 		if (len(targetUrl.Host) == 0 || targetUrl.Host == r.Host) && targetUrl.RequestURI() == r.RequestURI {
 			util.LogErrorString(context.Logger, "redirect to self URL")
