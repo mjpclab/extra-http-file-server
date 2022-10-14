@@ -27,7 +27,7 @@ func (list ipRangeList) BinaryMatchAddr(addr netip.Addr) bool {
 	low := 0
 	high := len(list) - 1
 	for low <= high {
-		mid := (low + high + 1) >> 1
+		mid := (low + high) >> 1
 		if list[mid].Contains(addr) {
 			return true
 		}
