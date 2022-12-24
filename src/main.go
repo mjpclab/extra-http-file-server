@@ -2,12 +2,14 @@ package src
 
 import (
 	"errors"
+	localDefaultTheme "mjpclab.dev/ehfs/src/defaultTheme"
 	"mjpclab.dev/ehfs/src/middleware"
 	"mjpclab.dev/ehfs/src/param"
 	"mjpclab.dev/ehfs/src/version"
 	"mjpclab.dev/ghfs/src/app"
 	"mjpclab.dev/ghfs/src/serverError"
 	"mjpclab.dev/ghfs/src/setting"
+	"mjpclab.dev/ghfs/src/tpl/defaultTheme"
 	"os"
 	"os/signal"
 	"syscall"
@@ -55,6 +57,9 @@ func Main() {
 
 	// setting
 	setting := setting.ParseFromEnv()
+
+	// override default theme
+	defaultTheme.DefaultTheme = localDefaultTheme.DefaultTheme
 
 	// app
 	appInst, errs := app.NewApp(baseParams, setting)

@@ -3,6 +3,8 @@
 Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 它为简单静态网站提供了常用的功能。
 
+![Extra HTTP File Server pages](doc/ehfs.gif)
+
 # 与Go HTTP File Server的区别
 
 ## 代码库
