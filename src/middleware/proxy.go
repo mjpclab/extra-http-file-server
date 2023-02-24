@@ -68,6 +68,7 @@ func getProxyMiddleware(arg [2]string, preOutputMids []middleware.Middleware) (m
 			Header: r.Header.Clone(),
 		}
 
+		proxyReq.Header.Set("Host", targetUrl.Host)
 		proxyReq.Header.Set("Referer", targetUrl.RequestURI())
 		proxyReq.Header.Set("Origin", targetUrl.Scheme+"://"+targetUrl.Host)
 		proxy.ServeHTTP(w, proxyReq)
