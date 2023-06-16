@@ -28,7 +28,7 @@ func getReturnStatusMiddleware(arg [2]string, outputMids []middleware.Middleware
 		}
 
 		result = middleware.Outputted
-		context.Status = code
+		*context.Status = code
 		for i := range outputMids {
 			if outputMids[i](w, r, context) == middleware.Outputted {
 				return

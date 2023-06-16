@@ -29,7 +29,7 @@ func getStatusPageMiddleware(arg [2]string) (middleware.Middleware, error) {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
-		if context.Status != code {
+		if *context.Status != code {
 			return middleware.GoNext
 		}
 
@@ -44,7 +44,7 @@ func getStatusPageMiddleware(arg [2]string) (middleware.Middleware, error) {
 		header.Set("Last-Modified", info.ModTime().UTC().Format(http.TimeFormat))
 		header.Set("Content-Type", contentType)
 
-		w.WriteHeader(context.Status)
+		w.WriteHeader(*context.Status)
 		if serverHandler.NeedResponseBody(r.Method) {
 			_, err = io.Copy(w, file)
 			if err != nil {

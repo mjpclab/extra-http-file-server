@@ -8,6 +8,7 @@ import (
 )
 
 func TestReturnStatus(t *testing.T) {
+	status := 0
 	mid, err := getReturnStatusMiddleware([2]string{`/doc`, "404"}, nil)
 	if err != nil {
 		t.FailNow()
@@ -19,7 +20,7 @@ func TestReturnStatus(t *testing.T) {
 
 	w = httptest.NewRecorder()
 	r = httptest.NewRequest(http.MethodGet, "/abc", nil)
-	result = mid(w, r, &middleware.Context{})
+	result = mid(w, r, &middleware.Context{Status: &status})
 	if result != middleware.GoNext {
 		t.Error(result)
 	}
@@ -29,7 +30,7 @@ func TestReturnStatus(t *testing.T) {
 
 	w = httptest.NewRecorder()
 	r = httptest.NewRequest(http.MethodGet, "/doc", nil)
-	result = mid(w, r, &middleware.Context{})
+	result = mid(w, r, &middleware.Context{Status: &status})
 	if result != middleware.Outputted {
 		t.Error(result)
 	}

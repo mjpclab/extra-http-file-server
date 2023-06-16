@@ -57,14 +57,14 @@ func getIPAllowMiddleware(ips, ipFiles []string, outputMids []middleware.Middlew
 
 		util.LogErrorString(context.Logger, "request denied as out of allow list from "+r.RemoteAddr)
 		result = middleware.Outputted
-		context.Status = http.StatusForbidden
+		*context.Status = http.StatusForbidden
 		for i := range outputMids {
 			if outputMids[i](w, r, context) == middleware.Outputted {
 				return
 			}
 		}
 
-		w.WriteHeader(context.Status)
+		w.WriteHeader(*context.Status)
 		return
 	}, nil
 }
@@ -79,19 +79,18 @@ func getIPDenyMiddleware(ips, ipFiles []string, outputMids []middleware.Middlewa
 		ip, _ := util.ExtractIPPort(r.RemoteAddr)
 		if !man.MatchStringAddr(ip) {
 			return middleware.GoNext
-
 		}
 
 		util.LogErrorString(context.Logger, "request denied as match deny list from "+r.RemoteAddr)
 		result = middleware.Outputted
-		context.Status = http.StatusForbidden
+		*context.Status = http.StatusForbidden
 		for i := range outputMids {
 			if outputMids[i](w, r, context) == middleware.Outputted {
 				return
 			}
 		}
 
-		w.WriteHeader(context.Status)
+		w.WriteHeader(*context.Status)
 		return
 	}, nil
 }
