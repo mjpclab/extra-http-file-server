@@ -33,6 +33,10 @@ type Param struct {
 	ToStatuses [][2]string
 	// value: [code, file]
 	StatusPages [][2]string
+
+	// value: [path, perms-comma-separated, user...]
+	PermsUrls [][]string
+	PermsDirs [][]string
 }
 
 func (param *Param) normalize() {
@@ -67,4 +71,6 @@ func (param *Param) normalize() {
 	param.ToStatuses = util.Filter(param.ToStatuses, nonEmptyKeyString2)
 	param.StatusPages = util.Filter(param.StatusPages, nonEmptyKeyString2)
 
+	param.PermsUrls = util.Filter(param.PermsUrls, validPerms)
+	param.PermsDirs = util.Filter(param.PermsDirs, validPerms)
 }

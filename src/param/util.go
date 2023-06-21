@@ -24,10 +24,6 @@ func nonEmptyKeyString3(item [3]string) bool {
 	return len(item[0]) > 0
 }
 
-func nonEmptyKeysString3(item [3]string) bool {
-	return len(item[0]) > 0 && len(item[1]) > 0
-}
-
 func toString3s(inputs []string) (outputs [][3]string) {
 	allKeyValues := baseParam.SplitAllKeyValues(inputs)
 	outputs = make([][3]string, len(allKeyValues))
@@ -35,4 +31,13 @@ func toString3s(inputs []string) (outputs [][3]string) {
 		copy(outputs[i][:], allKeyValues[i])
 	}
 	return outputs
+}
+
+func validPerms(inputs []string) bool {
+	// path, perms, user...
+	if len(inputs) < 3 {
+		return false
+	}
+
+	return len(inputs[0]) > 0 && len(inputs[1]) > 0
 }

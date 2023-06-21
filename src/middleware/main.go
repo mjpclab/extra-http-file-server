@@ -12,7 +12,7 @@ import (
 var errInvalidParamValue = errors.New("invalid param value")
 var errParamCountNotMatch = errors.New("base-param count is not equal to param count")
 
-func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids, postMids []middleware.Middleware, errs []error) {
+func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids, inMids, postMids []middleware.Middleware, errs []error) {
 	var mid middleware.Middleware
 	var err error
 	var es []error
@@ -164,6 +164,21 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 
 	// status pages (moved to dependent)
 
+	// perms
+	permsUrlsMids := make([]middleware.Middleware, 0, 1)
+	mid, es = getPermsUrlsMiddleware(param.PermsUrls)
+	errs = append(errs, es...)
+	if mid != nil {
+		permsUrlsMids = append(permsUrlsMids, mid)
+	}
+
+	permsDirsMids := make([]middleware.Middleware, 0, 1)
+	mid, es = getPermsDirsMiddleware(param.PermsDirs)
+	errs = append(errs, es...)
+	if mid != nil {
+		permsDirsMids = append(permsDirsMids, mid)
+	}
+
 	// combine mids
 	preMids = util.Concat(
 		ipAllowMids,
@@ -185,6 +200,11 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 		statusPageMids,
 	)
 
+	inMids = util.Concat(
+		permsUrlsMids,
+		permsDirsMids,
+	)
+
 	return
 }
 
@@ -195,7 +215,7 @@ func ApplyMiddlewares(baseParams []*baseParam.Param, params []*param.Param) (err
 
 	for i := range baseParams {
 		var es []error
-		baseParams[i].PreMiddlewares, baseParams[i].PostMiddlewares, es = ParamToMiddlewares(baseParams[i], params[i])
+		baseParams[i].PreMiddlewares, baseParams[i].InMiddlewares, baseParams[i].PostMiddlewares, es = ParamToMiddlewares(baseParams[i], params[i])
 		errs = append(errs, es...)
 	}
 

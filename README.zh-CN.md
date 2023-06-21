@@ -80,6 +80,19 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 --header-set <分隔符><match><分隔符><name><分隔符><value>
     当请求的URL（“/request/path?param=value”的形式）匹配正则表达式`match`时，
     添加或设置响应头。
+
+--perms <分隔符><url-path><分隔符><permission-list>[<分隔符><username> ...]
+    为指定用户授予路径（及子路径）权限。
+
+    `permission-list`是一个可以包含以下项目的逗号分割列表：
+    - upload
+    - mkdir
+    - delete
+    - archive
+
+    举例: --perms :/files:upload,delete:user1:user2
+--perms-dir <分隔符><url-path><分隔符><permission-list>[<分隔符><username> ...]
+    与--perms类似，但指定的是文件系统路径，而不是URL路径。
 ```
 
 ## 处理顺序
@@ -98,6 +111,7 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
   - 如果URL匹配，执行`--header-add`和`--header-set`并停止处理。
   - 如果状态码匹配，执行`--status-page`并停止处理。
 - ghfs内部处理流程
+- 如果路径匹配，执行`--perms`和`--perms-dir`。
 - 如果URL匹配，执行`--header-add`和`--header-set`。
 - 如果URL匹配，执行`--to-status`并停止处理。
   - 如果状态码匹配，执行`--status-page`并停止处理。
