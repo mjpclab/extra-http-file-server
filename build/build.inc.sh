@@ -1,4 +1,5 @@
 export GOPROXY=https://goproxy.cn,direct
+export CGO_ENABLED=0
 TMP='/tmp'
 OUTDIR='../output'
 MAINNAME='ehfs'
