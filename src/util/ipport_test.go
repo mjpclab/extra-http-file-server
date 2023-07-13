@@ -36,4 +36,36 @@ func TestExtractIPPort(t *testing.T) {
 	if port != "5678" {
 		t.Error(port)
 	}
+
+	ip, port = ExtractIPPort("[fe80::1]")
+	if ip != "fe80::1" {
+		t.Error(ip)
+	}
+	if port != "" {
+		t.Error(port)
+	}
+
+	ip, port = ExtractIPPort("[fe80::2%eth0]")
+	if ip != "fe80::2" {
+		t.Error(ip)
+	}
+	if port != "" {
+		t.Error(port)
+	}
+
+	ip, port = ExtractIPPort("[fe80::3]:1234")
+	if ip != "fe80::3" {
+		t.Error(ip)
+	}
+	if port != "1234" {
+		t.Error(port)
+	}
+
+	ip, port = ExtractIPPort("[fe80::4%eth0]:1234")
+	if ip != "fe80::4" {
+		t.Error(ip)
+	}
+	if port != "1234" {
+		t.Error(port)
+	}
 }
