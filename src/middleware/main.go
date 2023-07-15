@@ -164,6 +164,13 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 
 	// status pages (moved to dependent)
 
+	// pki validation skip to-https
+	pkiValidationSkipToHttpsMids := make([]middleware.Middleware, 0, 1)
+	if baseParam.ToHttps {
+		mid = getPkiValidationSkipToHttpsMiddleware()
+		pkiValidationSkipToHttpsMids = append(pkiValidationSkipToHttpsMids, mid)
+	}
+
 	// perms
 	permsUrlsMids := make([]middleware.Middleware, 0, 1)
 	mid, es = getPermsUrlsMiddleware(param.PermsUrls)
@@ -192,6 +199,7 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 		rewriteEndMids,
 		proxyMids,
 		returnMids,
+		pkiValidationSkipToHttpsMids,
 	)
 
 	postMids = util.Concat(

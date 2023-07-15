@@ -12,6 +12,10 @@ It provides frequently used features for a simple static website.
 Based on Go HTTP File Server's main branch, dropped support for legacy Go version.
 This means it is impossible to use legacy Go version to compile binaries for legacy systems, e.g. Windows XP.
 
+## Changed behavior
+For PKI validation URL `/.well-known/pki-validation/<resource>`,
+will skip redirecting from http: to https: even `--to-https` is specified.
+
 ## New options
 
 ```
