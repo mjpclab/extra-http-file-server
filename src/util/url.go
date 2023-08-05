@@ -1,6 +1,7 @@
 package util
 
 import (
+	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
@@ -26,4 +27,10 @@ func ReplaceUrl(reMatch *regexp.Regexp, toMatch, newUrl string) (*url.URL, error
 	}
 
 	return url.Parse(target)
+}
+
+func IsUrlSameAsReq(url *url.URL, req *http.Request) bool {
+	return (len(url.Scheme) == 0 || (url.Scheme == "https" && req.TLS != nil) || (url.Scheme == "http" && req.TLS == nil)) &&
+		(len(url.Host) == 0 || url.Host == req.Host) &&
+		url.RequestURI() == req.RequestURI
 }

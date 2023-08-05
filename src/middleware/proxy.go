@@ -45,7 +45,7 @@ func getProxyMiddleware(arg [2]string, preOutputMids []middleware.Middleware) (m
 		if len(targetUrl.Host) == 0 {
 			targetUrl.Host = r.Host
 		}
-		if targetUrl.Host == r.Host && targetUrl.RequestURI() == r.RequestURI {
+		if util.IsUrlSameAsReq(targetUrl, r) {
 			util.LogErrorString(context.Logger, "proxy to self URL")
 			w.WriteHeader(http.StatusBadRequest)
 			return

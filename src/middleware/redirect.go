@@ -43,7 +43,7 @@ func getRedirectMiddleware(arg [3]string) (middleware.Middleware, error) {
 			targetUrl.Path = prefix + targetUrl.Path
 		}
 		targetUrl = r.URL.ResolveReference(targetUrl)
-		if (len(targetUrl.Host) == 0 || targetUrl.Host == r.Host) && targetUrl.RequestURI() == r.RequestURI {
+		if util.IsUrlSameAsReq(targetUrl, r) {
 			util.LogErrorString(context.Logger, "redirect to self URL")
 			w.WriteHeader(http.StatusBadRequest)
 		} else {
