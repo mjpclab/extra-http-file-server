@@ -21,7 +21,7 @@ func getPkiValidationSkipToHttpsMiddleware() middleware.Middleware {
 
 		// skip https redirect for special url /.well-known/pki-validation/
 		// set `Request.TLS` a value to cheat redirect logic skipping redirect
-		if isPkiValidationResource(r.URL.Path) {
+		if isPkiValidationResource(context.PrefixReqPath) {
 			connState := tls.ConnectionState{}
 			r.TLS = &connState
 		}
