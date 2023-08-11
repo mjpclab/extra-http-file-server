@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func getStatusPageMiddleware(arg [2]string) (middleware.Middleware, error) {
+func getStatusPageMiddleware(arg [2]string, enableGzipStatic bool) (middleware.Middleware, error) {
 	code, err := strconv.Atoi(arg[0])
 	if err != nil {
 		return nil, err
@@ -38,13 +38,31 @@ func getStatusPageMiddleware(arg [2]string) (middleware.Middleware, error) {
 			util.LogError(context.Logger, err)
 			return middleware.GoNext
 		}
-		defer file.Close()
+		if context.File != nil {
+			(*context.File).Close()
+			*context.File = file
+		} else {
+			context.File = &file
+			defer file.Close()
+		}
+		if context.FileInfo != nil {
+			*context.FileInfo = info
+		} else {
+			context.FileInfo = &info
+		}
+		context.AliasFsPath = statusFile
+
+		useGzipStatic := enableGzipStatic && tryReplaceWithGzFileInfo(w, r, context)
 
 		header := w.Header()
-		header.Set("Last-Modified", info.ModTime().UTC().Format(http.TimeFormat))
+		header.Set("Last-Modified", (*context.FileInfo).ModTime().UTC().Format(http.TimeFormat))
 		header.Set("Content-Type", contentType)
+		header.Set("Content-Length", strconv.FormatInt((*context.FileInfo).Size(), 10))
+		if useGzipStatic {
+			header.Set("Content-Encoding", "gzip")
+		}
 
-		w.WriteHeader(*context.Status)
+		w.WriteHeader(code)
 		if serverHandler.NeedResponseBody(r.Method) {
 			_, err = io.Copy(w, file)
 			if err != nil {

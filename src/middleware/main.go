@@ -34,10 +34,20 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 		}
 	}
 
+	// dependent: gzip static
+	gzipStaticMids := make([]middleware.Middleware, 0, 1)
+	if param.GzipStatic {
+		mid, err = getGzipStaticMiddleware()
+		errs = serverError.AppendError(errs, err)
+		if mid != nil {
+			gzipStaticMids = append(gzipStaticMids, mid)
+		}
+	}
+
 	// dependent: status pages
 	statusPageMids := make([]middleware.Middleware, 0, len(param.StatusPages))
 	for i := range param.StatusPages {
-		mid, err = getStatusPageMiddleware(param.StatusPages[i])
+		mid, err = getStatusPageMiddleware(param.StatusPages[i], param.GzipStatic)
 		errs = serverError.AppendError(errs, err)
 		if mid != nil {
 			statusPageMids = append(statusPageMids, mid)
@@ -164,6 +174,8 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 
 	// status pages (moved to dependent)
 
+	// gzip static (moved to dependent)
+
 	// pki validation skip to-https
 	pkiValidationSkipToHttpsMids := make([]middleware.Middleware, 0, 1)
 	if baseParam.ToHttps {
@@ -206,6 +218,7 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 		headerMids,
 		toStatusMids,
 		statusPageMids,
+		gzipStaticMids,
 	)
 
 	inMids = util.Concat(

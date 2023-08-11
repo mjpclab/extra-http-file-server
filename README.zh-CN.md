@@ -80,6 +80,9 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 --status-page <分隔符><status-code><分隔符><fs-path>
     当响应状态码为`status-code`时，用文件`fs-path`的内容来响应。
 
+--gzip-static
+    当请求资源FILE时，如果客户端支持gzip解码，则尝试查找FILE.gz并输出为gzip压缩的内容。
+
 --header-add <分隔符><match><分隔符><name><分隔符><value>
 --header-set <分隔符><match><分隔符><name><分隔符><value>
     当请求的URL（“/request/path?param=value”的形式）匹配正则表达式`match`时，

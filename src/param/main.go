@@ -37,6 +37,8 @@ type Param struct {
 	// value: [path, perms-comma-separated, user...]
 	PermsUrls [][]string
 	PermsDirs [][]string
+
+	GzipStatic bool
 }
 
 func (param *Param) normalize() {

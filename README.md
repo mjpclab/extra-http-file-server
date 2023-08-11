@@ -81,6 +81,10 @@ will skip redirecting from http: to https: even `--to-https` is specified.
 --status-page <separator><status-code><separator><fs-path>
     When response status is `status-code`, respond with the file content from `fs-path`.
 
+--gzip-static
+    When requesting for FILE, if client supports gzip decoding, try looking for and
+    outputing FILE.gz as gzip compressed content.
+
 --header-add <separator><match><separator><name><separator><value>
 --header-set <separator><match><separator><name><separator><value>
     Add or set response header if URL(in the form of "/request/path?param=value")
