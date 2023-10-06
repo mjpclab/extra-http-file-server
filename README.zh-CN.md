@@ -13,7 +13,7 @@ Extra HTTP File Server基于Go HTTP File Server，附带额外功能。
 这意味着不能使用旧的Go版本来编译较老系统的二进制文件，例如Windows XP。
 
 ## 行为变化
-对于PKI验证URL`/.well-known/pki-validation/<resource>`，
+对于PKI验证URL`/.well-known/`，
 即使指定了`--to-https`，也将跳过从http:到https:的重定向。
 
 ## 新增选项
