@@ -3,13 +3,9 @@ package middleware
 import (
 	"crypto/tls"
 	"mjpclab.dev/ghfs/src/middleware"
+	"mjpclab.dev/ghfs/src/util"
 	"net/http"
 )
-
-func isPkiValidationResource(requestPath string) bool {
-	const valiPath = "/.well-known/"
-	return len(requestPath) > len(valiPath) && requestPath[:len(valiPath)] == valiPath
-}
 
 func getPkiValidationSkipToHttpsMiddleware() middleware.Middleware {
 	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
@@ -21,7 +17,7 @@ func getPkiValidationSkipToHttpsMiddleware() middleware.Middleware {
 
 		// skip https redirect for special url /.well-known/
 		// set `Request.TLS` a value to cheat redirect logic skipping redirect
-		if isPkiValidationResource(context.PrefixReqPath) {
+		if util.HasUrlPrefixDir(context.PrefixReqPath, "/.well-known") {
 			connState := tls.ConnectionState{}
 			r.TLS = &connState
 		}
