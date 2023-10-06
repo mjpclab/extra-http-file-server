@@ -7,7 +7,7 @@ import (
 )
 
 func isPkiValidationResource(requestPath string) bool {
-	const valiPath = "/.well-known/pki-validation/"
+	const valiPath = "/.well-known/"
 	return len(requestPath) > len(valiPath) && requestPath[:len(valiPath)] == valiPath
 }
 
@@ -19,7 +19,7 @@ func getPkiValidationSkipToHttpsMiddleware() middleware.Middleware {
 			return
 		}
 
-		// skip https redirect for special url /.well-known/pki-validation/
+		// skip https redirect for special url /.well-known/
 		// set `Request.TLS` a value to cheat redirect logic skipping redirect
 		if isPkiValidationResource(context.PrefixReqPath) {
 			connState := tls.ConnectionState{}
