@@ -6,6 +6,7 @@ import (
 	"mjpclab.dev/ehfs/src/middleware"
 	"mjpclab.dev/ehfs/src/param"
 	"mjpclab.dev/ehfs/src/version"
+	"mjpclab.dev/ghfs/src"
 	"mjpclab.dev/ghfs/src/app"
 	"mjpclab.dev/ghfs/src/serverError"
 	"mjpclab.dev/ghfs/src/setting"
@@ -22,7 +23,6 @@ func cleanupOnEnd(appInst *app.App) {
 	go func() {
 		<-chSignal
 		appInst.Shutdown()
-		os.Exit(0)
 	}()
 }
 
@@ -33,7 +33,10 @@ func reopenLogOnHup(appInst *app.App) {
 	go func() {
 		for range chSignal {
 			errs := appInst.ReOpenLog()
-			serverError.CheckFatal(errs...)
+			if serverError.CheckError(errs...) {
+				appInst.Shutdown()
+				break
+			}
 		}
 	}()
 }
@@ -41,36 +44,51 @@ func reopenLogOnHup(appInst *app.App) {
 func Main() {
 	// params
 	baseParams, params, printVersion, printHelp, errs := param.ParseFromCli()
-	serverError.CheckFatal(errs...)
+	if serverError.CheckError(errs...) {
+		return
+	}
 	if printVersion {
 		version.PrintVersion()
-		os.Exit(0)
+		return
 	}
 	if printHelp {
 		param.PrintHelp()
-		os.Exit(0)
+		return
 	}
 
 	// apply middlewares
 	errs = middleware.ApplyMiddlewares(baseParams, params)
-	serverError.CheckFatal(errs...)
-
-	// setting
-	setting := setting.ParseFromEnv()
+	if serverError.CheckError(errs...) {
+		return
+	}
 
 	// override default theme
 	defaultTheme.DefaultTheme = localDefaultTheme.DefaultTheme
 
+	// settings
+	settings := setting.ParseFromEnv()
+
+	// CPU profile
+	if len(settings.CPUProfileFile) > 0 {
+		cpuProfileFile, err := src.StartCPUProfile(settings.CPUProfileFile)
+		if serverError.CheckError(err) {
+			return
+		}
+		defer src.StopCPUProfile(cpuProfileFile)
+	}
+
 	// app
-	appInst, errs := app.NewApp(baseParams, setting)
-	serverError.CheckFatal(errs...)
+	appInst, errs := app.NewApp(baseParams, settings)
+	if serverError.CheckError(errs...) {
+		return
+	}
 	if appInst == nil {
-		serverError.CheckFatal(errors.New("failed to create application instance"))
+		serverError.CheckError(errors.New("failed to create application instance"))
+		return
 	}
 
 	cleanupOnEnd(appInst)
 	reopenLogOnHup(appInst)
 	errs = appInst.Open()
-	serverError.CheckFatal(errs...)
-	appInst.Shutdown()
+	serverError.CheckError(errs...)
 }
