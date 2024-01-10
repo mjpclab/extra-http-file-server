@@ -16,7 +16,7 @@ func TestPerms(t *testing.T) {
 		t.FailNow()
 	}
 
-	users := user.NewList(false)
+	users := user.NewList()
 	users.AddPlain("user1", "")
 	users.AddPlain("user2", "")
 	users.AddPlain("user3", "")
