@@ -89,19 +89,6 @@ will skip redirecting from http: to https: even `--to-https` is specified.
 --header-set <separator><match><separator><name><separator><value>
     Add or set response header if URL(in the form of "/request/path?param=value")
     matches `match`.
-
---perms <separator><url-path><separator><permission-list>[<separator><username> ...]
-    Grant path(and sub paths) permissions to specific users.
-
-    `permission-list` is a comma separated permission list which may contains:
-    - upload
-    - mkdir
-    - delete
-    - archive
-
-    example: --perms :/files:upload,delete:user1:user2
---perms-dir <separator><url-path><separator><permission-list>[<separator><username> ...]
-    Similar to --perms, but use file system path instead of url path.
 ```
 
 ## Processing order
@@ -120,7 +107,6 @@ will skip redirecting from http: to https: even `--to-https` is specified.
   - `--header-add` and `--header-set` executed if URL matched, and stop processing.
   - `--status-page` executed if status code matched, and stop processing.
 - ghfs internal process
-- `--perms` and `--perms-dir` executed if path matched.
 - `--header-add` and `--header-set` executed if URL matched.
 - `--to-status` executed if URL matched, and stop processing.
   - `--status-page` executed if status code matched, and stop processing.

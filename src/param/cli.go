@@ -70,12 +70,6 @@ func NewCliCmd() *goNixArgParser.Command {
 	err = options.AddFlag("gzipstatic", "--gzip-static", "EHFS_GZIP_STATIC", "look for request-file.gz on file system to output compressed content")
 	serverError.CheckFatal(err)
 
-	err = options.AddFlagValues("permsurls", "--perms", "", nil, "set permission for url path, format <sep><url-path><sep><upload|mkdir|delete|archive,...>[<sep><user> ...]")
-	serverError.CheckFatal(err)
-
-	err = options.AddFlagValues("permsdirs", "--perms-dir", "", nil, "set permission for file system path, format <sep><fs-path><sep><upload|mkdir|delete|archive,...>[<sep><user> ...]")
-	serverError.CheckFatal(err)
-
 	return cmd
 }
 
@@ -140,12 +134,6 @@ func CmdResultsToParams(results []*goNixArgParser.ParseResult) (params []*Param,
 		// status pages
 		statusPages, _ := result.GetStrings("statuspages")
 		param.StatusPages = baseParam.SplitAllKeyValue(statusPages)
-
-		// perms
-		permsUrls, _ := result.GetStrings("permsurls")
-		param.PermsUrls = baseParam.SplitAllKeyValues(permsUrls)
-		permsDirs, _ := result.GetStrings("permsdirs")
-		param.PermsDirs = baseParam.SplitAllKeyValues(permsDirs)
 
 		// gzip statics
 		param.GzipStatic = result.HasKey("gzipstatic")

@@ -32,12 +32,3 @@ func toString3s(inputs []string) (outputs [][3]string) {
 	}
 	return outputs
 }
-
-func validPerms(inputs []string) bool {
-	// path, perms, user...
-	if len(inputs) < 3 {
-		return false
-	}
-
-	return len(inputs[0]) > 0 && len(inputs[1]) > 0
-}

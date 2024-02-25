@@ -34,10 +34,6 @@ type Param struct {
 	// value: [code, file]
 	StatusPages [][2]string
 
-	// value: [path, perms-comma-separated, user...]
-	PermsUrls [][]string
-	PermsDirs [][]string
-
 	GzipStatic bool
 }
 
@@ -72,7 +68,4 @@ func (param *Param) normalize() {
 	param.HeaderSets = util.Filter(param.HeaderSets, nonEmptyString3)
 	param.ToStatuses = util.Filter(param.ToStatuses, nonEmptyKeyString2)
 	param.StatusPages = util.Filter(param.StatusPages, nonEmptyKeyString2)
-
-	param.PermsUrls = util.Filter(param.PermsUrls, validPerms)
-	param.PermsDirs = util.Filter(param.PermsDirs, validPerms)
 }
