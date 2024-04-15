@@ -41,7 +41,7 @@ func reopenLogOnHup(appInst *app.App) {
 	}()
 }
 
-func Main() {
+func Main() (ok bool) {
 	// params
 	baseParams, params, printVersion, printHelp, errs := param.ParseFromCli()
 	if serverError.CheckError(errs...) {
@@ -49,11 +49,11 @@ func Main() {
 	}
 	if printVersion {
 		version.PrintVersion()
-		return
+		return true
 	}
 	if printHelp {
 		param.PrintHelp()
-		return
+		return true
 	}
 
 	// apply middlewares
@@ -90,5 +90,9 @@ func Main() {
 	cleanupOnEnd(appInst)
 	reopenLogOnHup(appInst)
 	errs = appInst.Open()
-	serverError.CheckError(errs...)
+	if serverError.CheckError(errs...) {
+		return
+	}
+
+	return true
 }

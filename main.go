@@ -2,8 +2,12 @@ package main
 
 import (
 	"mjpclab.dev/ehfs/src"
+	"os"
 )
 
 func main() {
-	src.Main()
+	ok := src.Main()
+	if !ok {
+		os.Exit(1)
+	}
 }
