@@ -140,7 +140,7 @@ ehfs -l 8080 -r /path/to/share --return '#.git|.htaccess#403'
 ```
 
 ## 编译
-至少需要Go 1.18版本。
+至少需要Go 1.20版本。
 ```sh
 go build main.go
 ```

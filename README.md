@@ -142,7 +142,7 @@ ehfs -l 8080 -r /path/to/share --return '#.git|.htaccess#403'
 ```
 
 ## Compile
-Minimal required Go version is 1.18.
+Minimal required Go version is 1.20.
 ```sh
 go build main.go
 ```

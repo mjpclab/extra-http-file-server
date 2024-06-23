@@ -11,16 +11,16 @@ import (
 func getProxyMiddleware(arg [2]string, preOutputMids []middleware.Middleware) (middleware.Middleware, error) {
 	var err error
 	var reMatch *regexp.Regexp
-	var replace string
+	var replacement string
 
 	reMatch, err = regexp.Compile(arg[0])
 	if err != nil {
 		return nil, err
 	}
-	replace = arg[1]
+	replacement = arg[1]
 
 	proxy := &httputil.ReverseProxy{
-		Director: func(request *http.Request) {},
+		Rewrite: func(proxyReq *httputil.ProxyRequest) {},
 	}
 
 	return func(w http.ResponseWriter, r *http.Request, context *middleware.Context) (result middleware.ProcessResult) {
@@ -34,7 +34,7 @@ func getProxyMiddleware(arg [2]string, preOutputMids []middleware.Middleware) (m
 			preOutputMids[i](w, r, context)
 		}
 
-		targetUrl, err := util.ReplaceUrl(reMatch, requestURI, replace)
+		targetUrl, err := util.ReplaceUrl(reMatch, requestURI, replacement)
 		if err != nil {
 			util.LogError(context.Logger, err)
 			w.WriteHeader(http.StatusBadRequest)
@@ -61,17 +61,17 @@ func getProxyMiddleware(arg [2]string, preOutputMids []middleware.Middleware) (m
 			}
 		}
 
-		proxyReq := &http.Request{
+		outHeader := r.Header.Clone()
+		outHeader.Set("Host", targetUrl.Host)
+		outHeader.Set("Referer", targetUrl.RequestURI())
+		outHeader.Set("Origin", targetUrl.Scheme+"://"+targetUrl.Host)
+		outReq := &http.Request{
 			Method: r.Method,
 			URL:    targetUrl,
 			Body:   r.Body,
-			Header: r.Header.Clone(),
+			Header: outHeader,
 		}
-
-		proxyReq.Header.Set("Host", targetUrl.Host)
-		proxyReq.Header.Set("Referer", targetUrl.RequestURI())
-		proxyReq.Header.Set("Origin", targetUrl.Scheme+"://"+targetUrl.Host)
-		proxy.ServeHTTP(w, proxyReq)
+		proxy.ServeHTTP(w, outReq)
 		return
 	}, nil
 }
