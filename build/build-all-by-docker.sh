@@ -31,7 +31,7 @@ buildByDocker() {
         apt-get update;
         apt-get install -yq git zip;
       elif [ -e /etc/apk/repositories ]; then
-        sed -i "s;://[^/ ]*;://mirrors.aliyun.com;" /etc/apk/repositories;
+        sed -i -e "s;://[^/ ]*;://mirrors.aliyun.com;" /etc/apk/repositories;
         apk add bash git zip;
       fi
       git config --global safe.directory "*"
@@ -49,7 +49,7 @@ buildByDocker "$gover" "${builds[@]}"
 #builds=()
 #builds+=('windows 386 -7-8' 'windows amd64 -7-8')
 #builds+=('windows amd64,v2 -7-8' 'windows amd64,v3 -7-8')
-#builds+=('darwin amd64 -10.13-high-sierra')
+#builds+=('darwin amd64 -10.13-high-sierra-10.14-mojave')
 #buildByDocker "$gover" "${builds[@]}"
 
 #gover=1.16
