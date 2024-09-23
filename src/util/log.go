@@ -2,6 +2,18 @@ package util
 
 import "mjpclab.dev/ghfs/src/serverLog"
 
+func LogAccess(logger *serverLog.Logger, msg string) {
+	if logger == nil {
+		return
+	}
+
+	if logger.CanLogAccess() {
+		buf := serverLog.NewBuffer(len(msg))
+		buf = append(buf, []byte(msg)...)
+		logger.LogAccess(buf)
+	}
+}
+
 func LogError(logger *serverLog.Logger, err error) {
 	if logger == nil {
 		return

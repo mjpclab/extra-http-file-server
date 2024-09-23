@@ -72,6 +72,7 @@ func getProxyMiddleware(arg [2]string, preOutputMids []middleware.Middleware) (m
 			Header: outHeader,
 		}
 		proxy.ServeHTTP(w, outReq)
+		go util.LogAccess(context.Logger, "proxy request to "+outReq.URL.String())
 		return
 	}, nil
 }
