@@ -8,3 +8,4 @@ source ./build.inc.version.sh
 getLdFlags() {
 	echo "-s -w -X $BASEMOD/version.appVer=$VERSION -X $BASEMOD/version.appArch=${ARCH:-$(go env GOARCH)}"
 }
+TAR=${TAR:-tar}
