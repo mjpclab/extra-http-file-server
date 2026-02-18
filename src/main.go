@@ -1,14 +1,12 @@
 package src
 
 import (
-	localDefaultTheme "mjpclab.dev/ehfs/src/defaultTheme"
 	"mjpclab.dev/ehfs/src/middleware"
 	"mjpclab.dev/ehfs/src/param"
 	"mjpclab.dev/ehfs/src/version"
 	"mjpclab.dev/ghfs/src"
 	"mjpclab.dev/ghfs/src/serverError"
 	"mjpclab.dev/ghfs/src/setting"
-	"mjpclab.dev/ghfs/src/tpl/defaultTheme"
 )
 
 func Main() (ok bool) {
@@ -31,9 +29,6 @@ func Main() (ok bool) {
 	if serverError.CheckError(errs...) {
 		return
 	}
-
-	// override default theme
-	defaultTheme.DefaultTheme = localDefaultTheme.DefaultTheme
 
 	// settings
 	settings := setting.ParseFromEnv()
