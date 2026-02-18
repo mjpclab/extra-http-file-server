@@ -2,4 +2,4 @@ module mjpclab.dev/ehfs
 
 go 1.19
 
-require mjpclab.dev/ghfs v1.21.2
+require mjpclab.dev/ghfs v1.21.3
