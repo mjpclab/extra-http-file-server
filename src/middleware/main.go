@@ -3,10 +3,10 @@ package middleware
 import (
 	"errors"
 	"mjpclab.dev/ehfs/src/param"
-	"mjpclab.dev/ehfs/src/util"
 	"mjpclab.dev/ghfs/src/middleware"
 	baseParam "mjpclab.dev/ghfs/src/param"
 	"mjpclab.dev/ghfs/src/serverError"
+	"slices"
 )
 
 var errInvalidParamValue = errors.New("invalid param value")
@@ -153,7 +153,7 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 	// returns
 	returnMids := make([]middleware.Middleware, 0, len(param.Returns))
 	for i := range param.Returns {
-		mid, err = getReturnStatusMiddleware(param.Returns[i], util.Concat(headerMids, statusPageMids))
+		mid, err = getReturnStatusMiddleware(param.Returns[i], slices.Concat(headerMids, statusPageMids))
 		errs = serverError.AppendError(errs, err)
 		if mid != nil {
 			returnMids = append(returnMids, mid)
@@ -184,7 +184,7 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 	}
 
 	// combine mids
-	preMids = util.Concat(
+	preMids = slices.Concat(
 		ipAllowMids,
 		ipDenyMids,
 		rewriteHostMids,
@@ -199,7 +199,7 @@ func ParamToMiddlewares(baseParam *baseParam.Param, param *param.Param) (preMids
 		pkiValidationSkipToHttpsMids,
 	)
 
-	postMids = util.Concat(
+	postMids = slices.Concat(
 		headerMids,
 		toStatusMids,
 		statusPageMids,
