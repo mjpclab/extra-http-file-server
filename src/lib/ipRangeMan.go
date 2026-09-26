@@ -70,7 +70,7 @@ func NewIPRangeMan() *IPRangeMan {
 }
 
 func createRange(strRange string) (prefix netip.Prefix, err error) {
-	if slashIndex := strings.IndexByte(strRange, '/'); slashIndex >= 0 {
+	if strings.Contains(strRange, "/") {
 		prefix, err = netip.ParsePrefix(strRange)
 	} else {
 		var addr netip.Addr
